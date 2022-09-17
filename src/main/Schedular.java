@@ -1,6 +1,6 @@
 package main;
 
-public class Scheduler {
+public class Schedular {
 	public enum EInterrupt{
 		etimeOut,
 		eIOstarted,
@@ -17,7 +17,7 @@ public class Scheduler {
 	}
 	public void execute(Process process) {
 		for(int i = 0; i<process.getLineLength(); i++) {
-			process.execute(i);
+//			process.execute(i);
 			// 인터럭터가 있나 없나 확인함.
 			// 인터럭터 벡터 : 인터럭터 처리를 확인하는 함수
 //			checkInterrupt();

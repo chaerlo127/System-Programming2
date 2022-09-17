@@ -3,6 +3,7 @@ package main;
 import java.util.Vector;
 
 public class Process {
+	private int PC; // program counter
 	private Vector<Instruction> instructions;
 	public Process() {
 		this.instructions = new  Vector<Instruction>();
@@ -17,8 +18,9 @@ public class Process {
 	public int getLineLength() {
 		return instructions.size();
 	}
-	void execute(int lineNo) {
-		instructions.get(lineNo).execute();
+	void execute() {
+		instructions.get(PC).execute();
+		PC++;
 	}
 	private abstract class Instruction{
 		abstract void execute();
