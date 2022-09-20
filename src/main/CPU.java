@@ -1,39 +1,40 @@
 package main;
 
 public class CPU {
-	public enum EInterrupt{
-		eNone,
-		eTimeout;
-	}
-	private boolean bSwitch;
-	private Process process;
-	private EInterrupt interrupt;
-	public CPU() {
-		this.interrupt = EInterrupt.eNone;
-	}
-	public void setSwitch(boolean bSwitch) {
-		this.bSwitch = bSwitch;
+
+	public class Context{
+		private int PC;
+		public int getPC() {
+			return this.PC;
+		}
+		public void setPC(int PC) {
+			this.PC = PC;
+		}
+		
+		
 	}
 	
-	// 수동적, 명령을 주면 실행하는 것이 cpu
-	private void processInterrupt() {
-		switch(interrupt) {
-		case eTimeout:
-			break;
-		case eNone:
-			break;
-		default: 
-			break;
+//	private boolean bSwitch;
+
+	// context : register의 집합
+	private Context context;
+	public Process getContext() {
+		return this.process;
 		}
-	}
-	void loadProcess(Process process) {
+	public void setContext(Process process) {
 		this.process = process;
+		this.context = process.getContext();
 	}
-	public void run() {
-		while(bSwitch == true) {
-			// program counter
-			process.execute();
-			this.processInterrupt();
-		}
+
+	public CPU() {
+		this.context = new Context();
+	}
+	private Process process;
+
+	public void executeInstruction() {
+		// program counter
+		// 프로그램이 실행해야지 어디 라인으로 이동할지를 알게 된다. CPU가 일방적으로 pc에 알 방법이 없음. 한 줄을 실행해봐야지 알게 되는 것임.
+		int nextPC = this.process.run(this.context.getPC());
+		this.getContext().setPC(nextPC);
 	}
 }
