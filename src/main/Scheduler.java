@@ -5,52 +5,124 @@ import java.util.Vector;
 public class Scheduler {
 	private final int MAX_NUM_PROCESS = 10;
 	private boolean bPowerOn;
-	private ProcessQueue processQueue;
+	private ProcessQueue readyQueue;
+	private ProcessQueue waitQueue;
+	private InterruptHandler interruptHandler;
 	private Process runningProcess;
 	
 	public enum EInterrupt{
-		etimeOut,
+		eTimeOut,
 		eIOstarted,
-		eIOcompleted
+		eIOTerminated,
+		eProcessStarted,
+		eProcessTerminated
 	}
 	
+	//os로 생각
 	public Scheduler() {
 		this.bPowerOn = true;
-		this.processQueue = new ProcessQueue();
+		this.readyQueue = new ProcessQueue();
+		this.waitQueue = new ProcessQueue();
+		this.interruptHandler = new InterruptHandler();
 		
 		this.runningProcess = null;
 	}
 	
-	// interrupt를 처리하는 함수들로 구성되어 있는 것
-	private class InterruptHandler {
-		public void processInterrupt(EInterrupt eInterrupt) {
-			switch (eInterrupt) {
-			case etimeOut: break;
-			case eIOstarted: break;
-			case eIOcompleted: break;
-			default: break;
+	// enqueue <- ready queue
+	// 메모리 주소
+	public void enqueueReadyQueue(Process process) {
+		this.readyQueue.enqueue(process);
+	}
+	public void dequeueReadyQueue() {
+		this.readyQueue.dequeue();
+	}
+	// enqueue <- wait queue
+	// 메모리 주소
+	public void enqueueWaitQueue(Process process) {
+		this.waitQueue.enqueue(process);
+	}
+	public void dequeueWaitQueue() {
+		this.waitQueue.dequeue();
+	}
+	
+	// execute, 실행만 한다.
+	public void run() {
+		while (bPowerOn) {
+			this.interruptHandler.handle(); // interrupt
+			if (this.runningProcess != null) {
+				this.cpu.executeInstruction();// execute
 			}
 		}
 	}
 	
-	// execute
-	public void run() {
-		while(bPowerOn) {
-			// ready queue에서 새로운 것을 뽑아와라
-			// process context switching
-			this.runningProcess.setContext(this.cpu.getContext());
-			this.runningProcess = this.processQueue.dequeue(); // 프로세스 하나 queue에서 빠짐, running Process 변경
-			this.cpu.setContext(this.runningProcess.getContext());
-			//interrupt
-//			while(this.interrupt.getStatus()) {
-//				this.cpu.executeInstruction(this.runningProcess);// execute
-//			}
+	// ready queue에서 새로운 것을 뽑아와라
+	// process context switching
+	// waiting queue 넘김
+	private class InterruptHandler{
+		// interrupt는 종류가 늘어날 수도 있고 줄어들 수 있어서, 객체를 만드는 것이 더 좋긴 함. 
+		// interrupt는 timer, io controller, loader가 발생시킴.
+		
+		// Loader가 올렸을 때
+		private void HandleProcessStart() {
+			// enque를 해야하는 데 미리 해둠.
+			if(!readyQueue.isEmpty()) {
+				// dequeue
+				runningProcess = readyQueue.dequeue(); 
+				// switch context
+				cpu.setContext(runningProcess);
+			}
+		}
+		private void HandleProcessTerminate() {
 			
 		}
+		private void HandleTimeOut() {
+			if(runningProcess!=null) {
+				// save current cpu Contxt to running Process
+				runningProcess.setContext(cpu.getcontext());
+				// enqueue to the end
+				readyQueue.enqueue(runningProcess); // 돌아가고 있는 process context를 저장
+			}
+			if(!readyQueue.isEmpty()) {
+				// get next process
+				runningProcess = readyQueue.dequeue(); 
+				// switch context
+				cpu.setContext(runningProcess);
+			}
+		}
+		private void HandleIOStart() {
+			
+		}
+		private void HandleIOTerminate() {
+			
+		}
+
+		public void handle() {
+			EInterrupt eInterrupt = this.cpu.checkInterrupt();
+			switch(eInterrupt) {
+			case eProcessStarted:
+				HandleProcessStart();
+				break;
+			case eProcessTerminated:
+				HandleProcessTerminate();
+				break;
+			case eIOstarted:
+				HandleIOStart();
+				break;
+			case eIOTerminated:
+				HandleIOTerminate();
+				break;
+			case eTimeOut:
+				HandleTimeOut();
+				break;
+			default: break;
+			}
+		}
+
 	}
 	
 	// throws exception 필요
 	private class ProcessQueue extends Vector<Process>{
+		private static final long serialVersionUID = 1L;
 		//circular queue
 		private int head, tail, currentSize, maxSize;
 		public ProcessQueue() {
@@ -90,4 +162,6 @@ public class Scheduler {
 		}
 		
 	}
+
+
 }

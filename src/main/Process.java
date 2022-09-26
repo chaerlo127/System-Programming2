@@ -3,62 +3,62 @@ package main;
 import java.util.Vector;
 
 public class Process {
-	private int PC; // program counter
+	private class ProcessControlBlock{
+		// 고유 pid
+		private int pid; 
+		// account
+		private int oid; 
+		// statistics
+		// io status information
+		private int iodeviceid;
+		
+		public enum EStatus{
+			eRunning, 
+			eReady, 
+			eWaiting, 
+			eSuspended,
+		}
+		
+		class cpuContext{
+		// 모든 cpu 값들 저장
+			private EStatus estatus;
+			// segment register
+			private int cs; // code segment register
+			private int ds; // data segment register
+			private int ss; // stack segment register
+			private int hs; // heap segment register
+			
+			//cu
+			private int PC; // program counter, 
+		
+			
+			//ALU ac, computation에 관련된 것
+			private int AC;
+			
+			// memory interface
+			private int MAR;
+			private int MBR;
+		}
+		private cpuContext cpuContext;
+		
+	}
+
 	private Vector<Instruction> instructions;
 	public Process() {
 		this.instructions = new  Vector<Instruction>();
-		this.instructions.add(new L0());
-		this.instructions.add(new L1());
-		this.instructions.add(new L2());
-		this.instructions.add(new L3());
-		this.instructions.add(new L4());
-		this.instructions.add(new L5());
 	}
 	
 	public int getLineLength() {
 		return instructions.size();
 	}
 	void execute() {
-		instructions.get(PC).execute();
+		instructions.get(PC).execute("");;
 		PC++;
 	}
-	private abstract class Instruction{
-		abstract void execute();
-	}
-	private class L0 extends Instruction{
-		void execute(){
-			// 자바 바이트코드
-			System.out.println(this.getClass().getSimpleName());
+	private class Instruction{
+		public void execute(String intruction) {
+			System.out.println(intruction);
 		}
 	}
-	private class L1 extends Instruction{
-		void execute(){
-			System.out.println(this.getClass().getSimpleName());
-		}
-	}
-	
-	private class L2 extends Instruction{
-		void execute(){
-			System.out.println(this.getClass().getSimpleName());
-		}
-	}
-	
-	private class L3 extends Instruction{
-		void execute(){
-			System.out.println(this.getClass().getSimpleName());
-		}
-	}
-	
-	private class L4 extends Instruction{
-		void execute(){
-			System.out.println(this.getClass().getSimpleName());
-		}
-	}
-	
-	private class L5 extends Instruction{
-		void execute(){
-			System.out.println(this.getClass().getSimpleName());
-		}
-	}
-	
+
 }

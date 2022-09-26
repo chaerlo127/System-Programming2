@@ -1,6 +1,7 @@
 package main;
 
 
+//file : instruction, size, register size
 public class Loader {
 	public Process load(String processName) {
 		// 객체의 포인터를 process안의 스케줄러에게 넘겨줘야 함.
