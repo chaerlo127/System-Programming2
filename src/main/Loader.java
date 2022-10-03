@@ -1,11 +1,43 @@
 package main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 //file : instruction, size, register size
 public class Loader {
-	public Process load(String processName) {
-		// 객체의 포인터를 process안의 스케줄러에게 넘겨줘야 함.
-		// exe file을 생성해서 메모리 주소를 넘겨준다.
-		return new Process();
+	
+	//  code, data, stack, heap
+	private void parseData(Scanner scanner) {
+		String command = scanner.next();
+		while(command.compareTo(".code") != 0) {
+			parseData(scanner);
+		}
+	}
+	private void parseCode(Scanner scanner) {
+		String command = scanner.next();
+		while(command.compareTo(".end") != 0) {
+			parseData(scanner);
+		}
+	}
+	// 문장을 해석하는 것
+	private void parse(Scanner scanner) {
+		String command = scanner.next();
+		parseData(scanner);
+		parseCode(scanner);
+
+	}
+	public void load(String exeName) {
+		// file => process
+		try {
+			File file = new File("data" + "/" + exeName);
+			Scanner scanner = new Scanner(file);
+			this.parse(scanner);
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
