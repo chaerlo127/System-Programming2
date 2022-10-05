@@ -15,7 +15,7 @@ public class UI {
 		while(command.compareTo("q") != 0) {
 			if(command.compareTo("r") == 0) {
 				String fileName = scanner.next();
-				Process process1 =loader.load(fileName);
+				loader.load(fileName);
 			}
 			scheduler.run();
 		}

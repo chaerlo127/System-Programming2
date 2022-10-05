@@ -1,63 +1,75 @@
 package main;
 
+import java.util.Scanner;
 import java.util.Vector;
 
 public class Process {
-	private class ProcessControlBlock{
-		// 고유 pid
-		private int pid; 
-		// account
-		private int oid; 
-		// statistics
-		// io status information
-		private int iodeviceid;
-		
-		public enum EStatus{
-			eRunning, 
-			eReady, 
-			eWaiting, 
-			eSuspended,
-		}
-		
-		class cpuContext{
-		// 모든 cpu 값들 저장
-			private EStatus estatus;
-			// segment register
-			private int cs; // code segment register
-			private int ds; // data segment register
-			private int ss; // stack segment register
-			private int hs; // heap segment register
-			
-			//cu
-			private int PC; // program counter, 
-		
-			
-			//ALU ac, computation에 관련된 것
-			private int AC;
-			
-			// memory interface
-			private int MAR;
-			private int MBR;
-		}
-		private cpuContext cpuContext;
-		
+	
+	private int codeSize, dataSize, stackSize, heapSize;
+	private Vector<String> codeList;
+	
+	//getters
+	public int getCodeSize() {
+		return codeSize;
+	}
+	public int getDataSize() {
+		return dataSize;
+	}
+	public int getStackSize() {
+		return stackSize;
+	}
+	public int getHeapSize() {
+		return heapSize;
+	}
+	public Vector<String> getCodeList() {
+		return codeList;
 	}
 
-	private Vector<Instruction> instructions;
 	public Process() {
-		this.instructions = new  Vector<Instruction>();
+		this.codeList = new Vector<String>();
 	}
 	
-	public int getLineLength() {
-		return instructions.size();
+	//이해가 안됨...
+	private void loadDataSegment(Scanner scanner) {
+		String token = scanner.next(); // 독립적으로 떨어진 것
+		while (token.compareTo(".code") != 0) {
+			token = scanner.next();// codeSize
+//			String sizetoken = scanner.next(); // 256
+			int size = Integer.parseInt(token);
+			if(token.compareTo("codeSize") == 0) {
+				this.codeSize = size;
+			}else if(token.compareTo("dataSize") == 0) {
+				this.codeSize = size;
+			}else if(token.compareTo("stackSize") == 0) {
+				this.codeSize = size;
+			}else if(token.compareTo("heapSize") == 0) {
+				this.codeSize = size;
+			}
+		}
 	}
-	void execute() {
-		instructions.get(PC).execute("");;
-		PC++;
+	
+	private void loadCodeSegment(Scanner scanner) {
+		String line = scanner.nextLine(); // 독립적으로 떨어진 것
+		while (line.compareTo(".end") != 0) {
+			this.codeList.add(line);
+			line = scanner.nextLine();
+		}
 	}
-	private class Instruction{
-		public void execute(String intruction) {
-			System.out.println(intruction);
+
+	public void load(Scanner scanner) {
+		String line;
+		while (scanner.hasNext()) {
+			line = scanner.next();
+			while (line.compareTo(".end") != 0) {
+				// segment 읽기
+				if (line.compareTo(".data") == 0) {
+					loadDataSegment(scanner);
+				} else if (line.compareTo(".code") == 0) {
+					loadCodeSegment(scanner);
+				}
+
+			}
+
 		}
 	}
 
