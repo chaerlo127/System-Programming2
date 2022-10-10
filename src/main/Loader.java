@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Loader {	
 	// 객체 지향적으로 만들기
 	// 프로세스 보고 너가 만들어라
-	public void load(String exeName) {
+	public Process load(String exeName) {
 		// file => process
 		try {
 			File file = new File("data" + "/" + exeName);
@@ -16,14 +16,12 @@ public class Loader {
 			Process process = new Process();
 			process.load(scanner);
 			scanner.close();
-			
-			Scheduler scheduler = new Scheduler();
-			scheduler.getReadyQueue().enqueue(process);
-			scheduler.run();
+			return process;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 		
 	}
 }

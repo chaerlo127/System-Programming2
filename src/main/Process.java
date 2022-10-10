@@ -4,11 +4,17 @@ import java.util.Scanner;
 import java.util.Vector;
 
 public class Process {
-	
+
+
+	private int PC;
+
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
 	
 	//getters
+	public int getPC() {return PC;}
+
+	public void setPC(int PC) {this.PC = PC;}
 	public int getCodeSize() {
 		return codeSize;
 	}
@@ -28,8 +34,7 @@ public class Process {
 	public Process() {
 		this.codeList = new Vector<String>();
 	}
-	
-	//이해가 안됨...
+
 	private void loadDataSegment(Scanner scanner) {
 		String token = scanner.next(); // 독립적으로 떨어진 것
 		while (token.compareTo(".code") != 0) {
@@ -67,10 +72,12 @@ public class Process {
 				} else if (line.compareTo(".code") == 0) {
 					loadCodeSegment(scanner);
 				}
-
 			}
-
 		}
 	}
 
+	public void executeInstruction() {
+		String instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용
+		this.setPC(this.getPC() + 1);
+	}
 }
