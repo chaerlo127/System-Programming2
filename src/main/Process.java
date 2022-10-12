@@ -2,7 +2,27 @@ package main;
 
 import java.util.Scanner;
 import java.util.Vector;
-
+//		.program
+//		.data
+//		codeSize 40
+//		dataSize 256
+//		stackSize 4096
+//		heapSize 4096
+//		.code
+//		move @0, 0
+//		interrupt read
+//		move @4, r0
+//		move @8, 0
+//		.label loop
+//		compare @0, @4
+//		jumpGraterThan loopEnd
+//		add @8, 1
+//		jump label
+//		.label loopEnd
+//		move r0, @8
+//		interrupt write
+//		halt
+//		.end
 public class Process {
 
 
@@ -35,25 +55,41 @@ public class Process {
 		this.codeList = new Vector<String>();
 	}
 
-	private void loadDataSegment(Scanner scanner) {
-		String token = scanner.next(); // 독립적으로 떨어진 것
-		while (token.compareTo(".code") != 0) {
-			token = scanner.next();// codeSize
-//			String sizetoken = scanner.next(); // 256
-			int size = Integer.parseInt(token);
-			if(token.compareTo("codeSize") == 0) {
-				this.codeSize = size;
-			}else if(token.compareTo("dataSize") == 0) {
-				this.codeSize = size;
-			}else if(token.compareTo("stackSize") == 0) {
-				this.codeSize = size;
-			}else if(token.compareTo("heapSize") == 0) {
-				this.codeSize = size;
+
+
+	public void parse(Scanner scanner){
+		while (scanner.hasNext()) {
+			String token = scanner.next();
+			if(token.compareTo(".program") == 0){
+			}else if(token.compareTo(".code") == 0){
+				this.parseCode(scanner);
+			}else if(token.compareTo(".data") == 0){
+				this.parseData(scanner);
+			}else if(token.compareTo(".end") == 0){
 			}
 		}
 	}
+
+	private void parseData(Scanner scanner) {
+		String command = scanner.next(); // 독립적으로 떨어진 것
+		while (command.compareTo(".code") != 0) {
+			String operand = scanner.next();// codeSize
+			int size = Integer.parseInt(operand);
+			if(command.compareTo("codeSize") == 0) {
+				this.codeSize = size;
+			}else if(command.compareTo("dataSize") == 0) {
+				this.codeSize = size;
+			}else if(command.compareTo("stackSize") == 0) {
+				this.codeSize = size;
+			}else if(command.compareTo("heapSize") == 0) {
+				this.codeSize = size;
+			}
+
+			command = scanner.next();
+		}
+	}
 	
-	private void loadCodeSegment(Scanner scanner) {
+	private void parseCode(Scanner scanner) {
 		String line = scanner.nextLine(); // 독립적으로 떨어진 것
 		while (line.compareTo(".end") != 0) {
 			this.codeList.add(line);
@@ -61,20 +97,6 @@ public class Process {
 		}
 	}
 
-	public void load(Scanner scanner) {
-		String line;
-		while (scanner.hasNext()) {
-			line = scanner.next();
-			while (line.compareTo(".end") != 0) {
-				// segment 읽기
-				if (line.compareTo(".data") == 0) {
-					loadDataSegment(scanner);
-				} else if (line.compareTo(".code") == 0) {
-					loadCodeSegment(scanner);
-				}
-			}
-		}
-	}
 
 	public void executeInstruction() {
 		String instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용

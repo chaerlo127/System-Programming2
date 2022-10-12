@@ -14,7 +14,7 @@ public class Loader {
 			File file = new File("data" + "/" + exeName);
 			Scanner scanner = new Scanner(file);
 			Process process = new Process();
-			process.load(scanner);
+			process.parse(scanner);
 			scanner.close();
 			return process;
 		} catch (FileNotFoundException e) {

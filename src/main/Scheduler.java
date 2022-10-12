@@ -1,8 +1,7 @@
 package main;
 
-import java.util.Vector;
 
-public class Scheduler {
+public class Scheduler extends Thread{
 
 	private boolean bPowerOn;
 
@@ -38,11 +37,23 @@ public class Scheduler {
 	// execute, 실행만 한다.
 	public void run() {
 		while (bPowerOn) {
-			this.interruptHandler.handle(); // interrupt
+//			this.interruptHandler.handle(); // interrupt
 			if (this.runningProcess != null) {
 				this.runningProcess.executeInstruction();// execute
 			}
 		}
+	}
+
+
+	//critical section -> ReadyQueue가 critical section은 아님.
+	public synchronized void enReadyQueue(Process process) {
+		// synchronized: 누가 쓰면 아무도 쓰면 안됨. 한 사람만 쓰겠다. dequeue 와 enqueue 도 겹치지 않음. 순차적으로 접근해라.
+		// ex) lock도 가능, 세마포,,?
+		this.readyQueue.enqueue(process);
+	}
+	//critical section
+	public synchronized Process deReadyQueue(){
+		return this.readyQueue.dequeue();
 	}
 
 	public enum EInterrupt {
@@ -100,6 +111,7 @@ public class Scheduler {
 		}
 		private void HandleIOTerminate(Process process) {
 			// waiting queue dequeue는?
+//			getWaitQueue().dequeue() -> test 해보고 안될 시에는 dequeue 추가 하기
 			getReadyQueue().enqueue(process);
 		}
 		private void HandleTimeOut() {
@@ -122,7 +134,7 @@ public class Scheduler {
 					HandleIOTerminate(this.interrupt.getProcess());
 					break;
 				case eTimeOut:
-					HandleTimeOut(); // 독립적인 Thread가 있어야 함.
+					HandleTimeOut(); // 독립적인 Thread 가 있어야 함.
 					break;
 				default:
 					break;

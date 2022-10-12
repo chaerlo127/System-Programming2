@@ -4,6 +4,7 @@ codeSize 40
 dataSize 256
 stackSize 4096
 heapSize 4096
+.end
 .code
 move @0, 0
 interrupt read
