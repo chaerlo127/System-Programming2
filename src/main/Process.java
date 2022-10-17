@@ -25,7 +25,6 @@ import java.util.Vector;
 //		.end
 public class Process {
 
-
 	private int PC;
 
 	private int codeSize, dataSize, stackSize, heapSize;
@@ -54,22 +53,7 @@ public class Process {
 	public Process() {
 		this.codeList = new Vector<String>();
 	}
-
-
-
-	public void parse(Scanner scanner){
-		while (scanner.hasNext()) {
-			String token = scanner.next();
-			if(token.compareTo(".program") == 0){
-			}else if(token.compareTo(".code") == 0){
-				this.parseCode(scanner);
-			}else if(token.compareTo(".data") == 0){
-				this.parseData(scanner);
-			}else if(token.compareTo(".end") == 0){
-			}
-		}
-	}
-
+	
 	private void parseData(Scanner scanner) {
 		String command = scanner.next(); // 독립적으로 떨어진 것
 		while (command.compareTo(".end") != 0) {
@@ -84,7 +68,6 @@ public class Process {
 			}else if(command.compareTo("heapSize") == 0) {
 				this.heapSize = size;
 			}
-
 			command = scanner.next();
 		}
 	}
@@ -97,6 +80,18 @@ public class Process {
 		}
 	}
 
+	public void parse(Scanner scanner){
+		while (scanner.hasNext()) {
+			String token = scanner.next();
+			if(token.compareTo(".program") == 0){
+			}else if(token.compareTo(".code") == 0){
+				this.parseCode(scanner);
+			}else if(token.compareTo(".data") == 0){
+				this.parseData(scanner);
+			}else if(token.compareTo(".end") == 0){
+			}
+		}
+	}
 
 	public boolean executeInstruction() {
 		String instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용

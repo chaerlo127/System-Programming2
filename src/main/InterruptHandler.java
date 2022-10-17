@@ -1,7 +1,5 @@
 package main;
-
-
-//ready queue에서 새로운 것을 뽑아와라
+// ready queue에서 새로운 것을 뽑아와라
 // process context switching
 // waiting queue 넘김
 public class InterruptHandler {
@@ -27,6 +25,7 @@ public class InterruptHandler {
             this.process = process;
         }
     }
+    
     // critical section
     private Queue<Interrupt> interruptQ;
     public Interrupt get() {
@@ -35,6 +34,7 @@ public class InterruptHandler {
     public void set(Interrupt Interrupt) {
         this.interruptQ.enqueue(Interrupt);
     }
+    
     ///////////////////////////////////////////////////////
 
     public InterruptHandler(){
@@ -62,28 +62,28 @@ public class InterruptHandler {
 //        getReadyQueue().enqueue(runningProcess);
 //        runningProcess = getReadyQueue().dequeue();
     }
-    public void handle() {
-        Interrupt interrupt = this.get();
-        if(interrupt != null){
-            switch (interrupt.geteInterrupt()) {
-                case eProcessStarted: // Loader
-                    HandleProcessStart(interrupt.getProcess());
-                    break;
-                case eProcessTerminated:
-                    HandleProcessTerminate();
-                    break;
-                case eIOStarted:
-                    HandleIOStart();
-                    break;
-                case eIOTerminated:
-                    HandleIOTerminate(interrupt.getProcess());
-                    break;
-                case eTimeOut:
-                    HandleTimeOut(); // 독립적인 Thread 가 있어야 함.
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+	public void handle() {
+		Interrupt interrupt = this.get();
+		if (interrupt != null) {
+			switch (interrupt.geteInterrupt()) {
+			case eProcessStarted: // Loader
+				HandleProcessStart(interrupt.getProcess());
+				break;
+			case eProcessTerminated:
+				HandleProcessTerminate();
+				break;
+			case eIOStarted:
+				HandleIOStart();
+				break;
+			case eIOTerminated:
+				HandleIOTerminate(interrupt.getProcess());
+				break;
+			case eTimeOut:
+				HandleTimeOut(); // 독립적인 Thread 가 있어야 함.
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }

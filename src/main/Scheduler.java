@@ -20,9 +20,6 @@ public class Scheduler extends Thread{
 		return waitQueue;
 	}
 	///////////////////////////////////////////////////////
-
-
-	//os로 생각
 	public Scheduler() {
 		this.bPowerOn = true;
 		this.readyQueue = new Queue<Process>();
@@ -49,6 +46,7 @@ public class Scheduler extends Thread{
 			this.interruptHandler.handle();
 		}
 	}
+	
 	//critical section -> ReadyQueue가 critical section은 아님.
 	public synchronized void enReadyQueue(Process process) {
 		// synchronized: 누가 쓰면 아무도 쓰면 안됨. 한 사람만 쓰겠다. dequeue 와 enqueue 도 겹치지 않음. 순차적으로 접근해라.

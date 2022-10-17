@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 //file : instruction, size, register size
-public class Loader {	
+public class Loader {
 	// 객체 지향적으로 만들기
 	// 프로세스 보고 너가 만들어라
 	public Process load(String exeName) {
@@ -22,6 +22,6 @@ public class Loader {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
 }

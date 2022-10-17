@@ -11,10 +11,10 @@ public class UI extends Thread{
 	// run override 를 하면 자동으로 run을 해줌.
 	public void run() {
 		Loader loader = new Loader();
+		
 		// console command
 		// "r fileName" : run -> execute fileName
 		// "q" -> quit program
-		
 		Scanner scanner = new Scanner(System.in);
 		String command = scanner.next();
 		while(command.compareTo("q") != 0) {
