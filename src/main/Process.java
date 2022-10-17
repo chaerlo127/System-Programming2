@@ -98,8 +98,13 @@ public class Process {
 	}
 
 
-	public void executeInstruction() {
+	public boolean executeInstruction() {
 		String instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용
 		this.setPC(this.getPC() + 1);
+		if (instruction.compareTo("halt") == 0){
+			// 프로그램 끝, 원래는 인터럭터를 걸어야 한다.
+			return false;
+		}
+		return true;
 	}
 }

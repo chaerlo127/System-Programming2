@@ -2,15 +2,17 @@ package main;
 
 import java.util.Vector;
 
+// template class -> new 할 때, data type도 같이 선언을 해준다.
 // throws exception 필요
-public class ProcessQueue extends Vector<Process> {
-    private final int MAX_NUM_PROCESS = 10;
+public class Queue<T> extends Vector<T> {
+    private final int MAX_NUM_ELEMENT = 10;
     private static final long serialVersionUID = 1L;
+
     //circular queue
     private int head, tail, currentSize, maxSize;
-    public ProcessQueue() {
+    public Queue() {
         // 한 번에 떠있을 수 있는 Process의 개수
-        this.maxSize = MAX_NUM_PROCESS;
+        this.maxSize = MAX_NUM_ELEMENT;
         this.currentSize = 0;
         this.head = 0;
         this.tail = 0;
@@ -22,10 +24,10 @@ public class ProcessQueue extends Vector<Process> {
     }
 
     // => 추가 exception handling
-    public void enqueue(Process process) {
+    public void enqueue(T element) {
         if(this.currentSize < this.maxSize) {
             // process 하나 세팅
-            this.set(this.tail, process);
+            this.set(this.tail, element);
             // 실제로 메모리 주소 들어가는 것
             this.tail = (this.tail + 1)%maxSize;
             this.currentSize ++;
@@ -33,15 +35,15 @@ public class ProcessQueue extends Vector<Process> {
     }
 
     // => 추가 exception handling
-    public Process dequeue() {
-        Process process = null;
+    public T dequeue() {
+        T element = null;
         if(this.currentSize>0) {
-            process = this.get(head);
+            element = this.get(head);
             this.head = (this.head + 1)%maxSize;
             this.currentSize --;
-            return process;
+            return element;
         }
-        return process;
+        return element;
     }
 
 }

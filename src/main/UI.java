@@ -23,6 +23,7 @@ public class UI extends Thread{
 				Process process =loader.load(fileName); // process 생성
 				scheduler.enReadyQueue(process);
 			}
+			String fileName = scanner.next();
 		}
 		scanner.close();
 	}
