@@ -1,9 +1,9 @@
 package main;
 
 
-//ready queue¿¡¼­ »õ·Î¿î °ÍÀ» »Ì¾Æ¿Í¶ó
+//ready queueì—ì„œ ìƒˆë¡œìš´ ê²ƒì„ ë½‘ì•„ì™€ë¼
 // process context switching
-// waiting queue ³Ñ±è
+// waiting queue ë„˜ê¹€
 public class InterruptHandler {
     public enum EInterrupt {
         eTimeOut,
@@ -45,7 +45,7 @@ public class InterruptHandler {
     }
 
     private void HandleProcessTerminate() {
-        // ÇöÀç ½ÇÇàµÇ´Â process°¡ ³¡³ª¾ßÇÏ´Ï±î »õ·Î¿î Process°¡ ½ÇÇàµÇ¾î¾ß ÇÑ´Ù.
+        // í˜„ì¬ ì‹¤í–‰ë˜ëŠ” processê°€ ëë‚˜ì•¼í•˜ë‹ˆê¹Œ ìƒˆë¡œìš´ Processê°€ ì‹¤í–‰ë˜ì–´ì•¼ í•œë‹¤.
 //        runningProcess = getReadyQueue().dequeue();
     }
     private void HandleIOStart() {
@@ -53,8 +53,8 @@ public class InterruptHandler {
 //        runningProcess = getReadyQueue().dequeue();
     }
     private void HandleIOTerminate(Process process) {
-        // waiting queue dequeue´Â?
-//			getWaitQueue().dequeue() -> test ÇØº¸°í ¾ÈµÉ ½Ã¿¡´Â dequeue Ãß°¡ ÇÏ±â
+        // waiting queue dequeueëŠ”?
+//			getWaitQueue().dequeue() -> test í•´ë³´ê³  ì•ˆë  ì‹œì—ëŠ” dequeue ì¶”ê°€ í•˜ê¸°
 //        getReadyQueue().enqueue(process);
     }
     private void HandleTimeOut() {
@@ -79,7 +79,7 @@ public class InterruptHandler {
                     HandleIOTerminate(interrupt.getProcess());
                     break;
                 case eTimeOut:
-                    HandleTimeOut(); // µ¶¸³ÀûÀÎ Thread °¡ ÀÖ¾î¾ß ÇÔ.
+                    HandleTimeOut(); // ë…ë¦½ì ì¸ Thread ê°€ ìˆì–´ì•¼ í•¨.
                     break;
                 default:
                     break;

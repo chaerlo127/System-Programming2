@@ -22,7 +22,7 @@ public class Scheduler extends Thread{
 	///////////////////////////////////////////////////////
 
 
-	//os·Î »ı°¢
+	//osë¡œ ìƒê°
 	public Scheduler() {
 		this.bPowerOn = true;
 		this.readyQueue = new Queue<Process>();
@@ -32,16 +32,16 @@ public class Scheduler extends Thread{
 		this.runningProcess = null;
 	}
 
-	// execute, ½ÇÇà¸¸ ÇÑ´Ù.
-	// idle process »óÈ² -> waitQueue ·Î µé¾î°¡¾ß ÇÔ. °è¼Ó µ¹¾Æ°¡¸é cpu Á¡À¯À²ÀÌ Ä¿Áø´Ù.
+	// execute, ì‹¤í–‰ë§Œ í•œë‹¤.
+	// idle process ìƒí™© -> waitQueue ë¡œ ë“¤ì–´ê°€ì•¼ í•¨. ê³„ì† ëŒì•„ê°€ë©´ cpu ì ìœ ìœ¨ì´ ì»¤ì§„ë‹¤.
 	public void run() {
 		while (bPowerOn) {
-			// running process°¡ nullÀÌ ¾Æ´Ï¸é instruction À» ÀĞ´Â´Ù.
+			// running processê°€ nullì´ ì•„ë‹ˆë©´ instruction ì„ ì½ëŠ”ë‹¤.
 			if (this.runningProcess != null) {
 				boolean result = this.runningProcess.executeInstruction();// execute
 				if(!result){
-					// ³¡³µÀ¸¸é
-					this.runningProcess = this.deReadyQueue(); // ¿ø·¡´Â ÀÎÅÍ·°ÅÍ°¡ ÇØ¾ßÇÒ ÀÏÀÓ.
+					// ëë‚¬ìœ¼ë©´
+					this.runningProcess = this.deReadyQueue(); // ì›ë˜ëŠ” ì¸í„°ëŸ­í„°ê°€ í•´ì•¼í•  ì¼ì„.
 				}
 			} else {
 				this.runningProcess = this.deReadyQueue();
@@ -49,10 +49,10 @@ public class Scheduler extends Thread{
 			this.interruptHandler.handle();
 		}
 	}
-	//critical section -> ReadyQueue°¡ critical sectionÀº ¾Æ´Ô.
+	//critical section -> ReadyQueueê°€ critical sectionì€ ì•„ë‹˜.
 	public synchronized void enReadyQueue(Process process) {
-		// synchronized: ´©°¡ ¾²¸é ¾Æ¹«µµ ¾²¸é ¾ÈµÊ. ÇÑ »ç¶÷¸¸ ¾²°Ú´Ù. dequeue ¿Í enqueue µµ °ãÄ¡Áö ¾ÊÀ½. ¼øÂ÷ÀûÀ¸·Î Á¢±ÙÇØ¶ó.
-		// ex) lockµµ °¡´É, ¼¼¸¶Æ÷,,?
+		// synchronized: ëˆ„ê°€ ì“°ë©´ ì•„ë¬´ë„ ì“°ë©´ ì•ˆë¨. í•œ ì‚¬ëŒë§Œ ì“°ê² ë‹¤. dequeue ì™€ enqueue ë„ ê²¹ì¹˜ì§€ ì•ŠìŒ. ìˆœì°¨ì ìœ¼ë¡œ ì ‘ê·¼í•´ë¼.
+		// ex) lockë„ ê°€ëŠ¥, ì„¸ë§ˆí¬,,?
 		this.readyQueue.enqueue(process);
 	}
 	//critical section

@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 //file : instruction, size, register size
 public class Loader {	
-	// °´Ã¼ ÁöÇâÀûÀ¸·Î ¸¸µé±â
-	// ÇÁ·Î¼¼½º º¸°í ³Ê°¡ ¸¸µé¾î¶ó
+	// ê°ì²´ ì§€í–¥ì ìœ¼ë¡œ ë§Œë“¤ê¸°
+	// í”„ë¡œì„¸ìŠ¤ ë³´ê³  ë„ˆê°€ ë§Œë“¤ì–´ë¼
 	public Process load(String exeName) {
 		// file => process
 		try {

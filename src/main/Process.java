@@ -71,18 +71,18 @@ public class Process {
 	}
 
 	private void parseData(Scanner scanner) {
-		String command = scanner.next(); // µ¶¸³ÀûÀ¸·Î ¶³¾îÁø °Í
-		while (command.compareTo(".code") != 0) {
+		String command = scanner.next(); // ë…ë¦½ì ìœ¼ë¡œ ë–¨ì–´ì§„ ê²ƒ
+		while (command.compareTo(".end") != 0) {
 			String operand = scanner.next();// codeSize
 			int size = Integer.parseInt(operand);
 			if(command.compareTo("codeSize") == 0) {
 				this.codeSize = size;
 			}else if(command.compareTo("dataSize") == 0) {
-				this.codeSize = size;
+				this.dataSize = size;
 			}else if(command.compareTo("stackSize") == 0) {
-				this.codeSize = size;
+				this.stackSize = size;
 			}else if(command.compareTo("heapSize") == 0) {
-				this.codeSize = size;
+				this.heapSize = size;
 			}
 
 			command = scanner.next();
@@ -90,7 +90,7 @@ public class Process {
 	}
 	
 	private void parseCode(Scanner scanner) {
-		String line = scanner.nextLine(); // µ¶¸³ÀûÀ¸·Î ¶³¾îÁø °Í
+		String line = scanner.nextLine(); // ë…ë¦½ì ìœ¼ë¡œ ë–¨ì–´ì§„ ê²ƒ
 		while (line.compareTo(".end") != 0) {
 			this.codeList.add(line);
 			line = scanner.nextLine();
@@ -99,10 +99,10 @@ public class Process {
 
 
 	public boolean executeInstruction() {
-		String instruction = this.codeList.get(this.getPC()); // pcb¿¡¼­ °¡Áö°í ÀÖ¾î¾ß ÇÒ ³»¿ë
+		String instruction = this.codeList.get(this.getPC()); // pcbì—ì„œ ê°€ì§€ê³  ìˆì–´ì•¼ í•  ë‚´ìš©
 		this.setPC(this.getPC() + 1);
 		if (instruction.compareTo("halt") == 0){
-			// ÇÁ·Î±×·¥ ³¡, ¿ø·¡´Â ÀÎÅÍ·°ÅÍ¸¦ °É¾î¾ß ÇÑ´Ù.
+			// í”„ë¡œê·¸ë¨ ë, ì›ë˜ëŠ” ì¸í„°ëŸ­í„°ë¥¼ ê±¸ì–´ì•¼ í•œë‹¤.
 			return false;
 		}
 		return true;
