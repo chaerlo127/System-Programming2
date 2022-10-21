@@ -96,19 +96,63 @@ public class Process {
 	}
 
 	public boolean executeInstruction(InterruptHandler interruptHandler) {
-		String instruction = "";
-		while(instruction != null) {
-			instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용
-			this.setPC(this.getPC() + 1);
-			
-			if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
-				interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
+		this.currentThread =  Thread.currentThread();
+		
+		TimerInterrupt kilInterrupt = new TimerInterrupt();
+		 try {
+	            // 일정시간 지나면 현재 Thread 를 종료
+			 kilInterrupt.start();
+	            
+			 String instruction = "";
+				while(instruction != null) {
+					Thread.sleep(1000);
+					instruction = this.codeList.get(this.getPC());
+					this.setPC(this.getPC() + 1);
+					
+					if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
+						interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
+						return true;
+					}
+					
+					if (instruction.compareTo("halt") == 0)	return false;
+					System.out.println(instruction);
+				}
 				return true;
-			}
-			
-			if (instruction.compareTo("halt") == 0)	return false;
-			System.out.println(instruction);
-		}
-		return true;
+	        } catch (Exception e) {
+	        	interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eTimeOut, this));
+	            
+	        } finally {
+	            try {
+	            	kilInterrupt.interrupt();
+	            	return true;
+	            } catch (Exception e) {}
+	        }
+		return false;
+	    }
+	
+	Thread currentThread;
+	public class TimerInterrupt extends Thread{
+		 @Override
+         public void run() {
+             try {
+                 Thread.sleep(5000);
+                 
+             } catch (InterruptedException e) {
+                 System.out.println("Interrupt 발생");
+                 return;
+                 
+             } catch (Exception e) {
+                 // 무시
+             }
+             
+             try {
+                 System.out.println("Time Out Interrupt");
+                 currentThread.interrupt();
+                 return;
+                 
+             } catch (Exception e) {
+                 // 무시
+             }
+         }
 	}
 }

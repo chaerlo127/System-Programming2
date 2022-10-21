@@ -49,29 +49,33 @@ public class InterruptHandler {
     }
     private void HandleProcessStart(Process process) {
     	this.scheduler.getReadyQueue().enqueue(process);
-//        getReadyQueue().enqueue(process);
     }
 
     private void HandleProcessTerminate() {
-        // 현재 실행되는 process가 끝나야하니까 새로운 Process가 실행되어야 한다.
 //        runningProcess = getReadyQueue().dequeue();
     }
+    
+    // IO device Interrupt Start
     private void HandleIOStart(Process process) {
-    	System.out.println("------------------ IO Interrupt Start ------------------" + scheduler.getWaitQueue().indexOf(process));
+    	System.out.println("------------------ IO Interrupt Start ------------------");
     	this.scheduler.getWaitQueue().enqueue(process);
     	this.set(this.makeInterrupt(EInterrupt.eIOTerminated, process));
-//		runningProcess = getReadyQueue().dequeue();
     }
+    
+    // IO device Interrupt Terminate
     private void HandleIOTerminate() {
     	Process process = this.scheduler.getWaitQueue().dequeue();
-    	System.out.println("------------------ IO Interrupt Finished ------------------"+ scheduler.getWaitQueue().indexOf(process));
+    	System.out.println("------------------ IO Interrupt Finished ------------------");
     	this.scheduler.enReadyQueue(process);
     }
-    private void HandleTimeOut() {
+    
+    // Timeout Interrupt 
+    private void HandleTimeOut(Process process) {
         // context switching
-//        getReadyQueue().enqueue(runningProcess);
-//        runningProcess = getReadyQueue().dequeue();
+    	System.out.println("------------------ Time Out Interrupt ------------------");
+    	this.scheduler.enReadyQueue(process);
     }
+    
 	public void handle() {
 		Interrupt interrupt = this.get();
 		if (interrupt != null) {
@@ -80,7 +84,7 @@ public class InterruptHandler {
 				HandleProcessStart(interrupt.getProcess());
 				break;
 			case eProcessTerminated:
-//				HandleProcessTerminate(interrupt.getProcess());
+				HandleProcessTerminate();
 				break;
 			case eIOStarted:
 				HandleIOStart(interrupt.getProcess());
@@ -89,7 +93,7 @@ public class InterruptHandler {
 				HandleIOTerminate();
 				break;
 			case eTimeOut:
-				HandleTimeOut(); // 독립적인 Thread 가 있어야 함.
+				HandleTimeOut(interrupt.getProcess()); // 독립적인 Thread 가 있어야 함.
 				break;
 			default:
 				break;
