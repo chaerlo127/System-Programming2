@@ -18,8 +18,8 @@ public class Loader {
 			scanner.close();
 			return process;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("파일을 찾을 수 없습니다. 다시 입력해주세요");
+//			e.printStackTrace();
 		}
 		return null;
 	}

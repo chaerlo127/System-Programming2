@@ -21,7 +21,8 @@ public class UI extends Thread{
 			if(command.compareTo("r") == 0) {
 				String fileName = scanner.next();
 				Process process =loader.load(fileName); // process 생성
-				scheduler.enReadyQueue(process); // blocking 되면 문제가 발생될 수 있음.
+				if(process != null) scheduler.enReadyQueue(process); // blocking 되면 문제가 발생될 수 있음.
+				
 			}
 			command = scanner.next();
 		}

@@ -2,8 +2,21 @@ package main;
 
 import java.util.concurrent.Semaphore;
 
-public class Scheduler extends Thread{
+import main.InterruptHandler.EInterrupt;
 
+public class Scheduler extends Thread{
+	/**
+	 * 
+	 * int a = 0;
+	 * int b = scanner.nextInt(System.in);
+	 * int c = 0;
+	 * while(a>b){
+	 *  c =+ 1;
+	 * }
+	 * b = c;
+	 * System.out.println(c)
+
+	 */
 	private static final int MAX_READY_COMMITS = 10;
 	private boolean bPowerOn;
 	
@@ -31,7 +44,7 @@ public class Scheduler extends Thread{
 			this.readyQueue = new Queue<Process>();
 			this.waitQueue = new Queue<Process>();
 			
-			this.interruptHandler = new InterruptHandler();
+			this.interruptHandler = new InterruptHandler(this);
 			
 			this.fullSemaphoreReady = new Semaphore(MAX_READY_COMMITS, true);
 			this.emptySemaphoreReady = new Semaphore(MAX_READY_COMMITS, true);
@@ -49,31 +62,36 @@ public class Scheduler extends Thread{
 	public void run() {
 		while (bPowerOn) {
 			this.runningProcess = this.deReadyQueue(); // dequeue가 없으면 block
-			boolean result = this.runningProcess.executeInstruction();// execute
-			this.interruptHandler.handle();
+			if(this.runningProcess!= null) {
+				boolean result = this.runningProcess.executeInstruction(interruptHandler);// execute
+				this.interruptHandler.handle();
+			}
 		}
 	}
 	
+	
 	//critical section -> ReadyQueue가 critical section은 아님.
+
 	public synchronized void enReadyQueue(Process process) {
-		// synchronized: 누가 쓰면 아무도 쓰면 안됨. 한 사람만 쓰겠다. dequeue 와 enqueue 도 겹치지 않음. 순차적으로 접근해라.
-		// ex) lock도 가능, 세마포,,?
+		// critical section
 		try {
-			this.fullSemaphoreReady.acquire(); // 꽉 찼는지 확인, 빈 것 있는지 확인, 꽉차면 Block
-			this.readyQueue.enqueue(process);
-			this.emptySemaphoreReady.release(); // 하나를 풀어준다.
+			this.fullSemaphoreReady.acquire();
+//			this.readyQueue.enqueue(process);
+			// enqueue가 아니라, interrupt를 해서 생성한 후에 그 안에 enqueue를 한다
+			if(process.getPC() == 0) interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessStarted, process));
+			else this.readyQueue.enqueue(process);
+			this.interruptHandler.handle();
+			this.emptySemaphoreReady.release();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-
-	// critical section
+	
 	public synchronized Process deReadyQueue() {
 		Process process = null;
 		try {
-			this.emptySemaphoreReady.acquire(); // 여기서 죽음. release가 되어 있지 않음
+			this.emptySemaphoreReady.acquire();// 여기서 죽음. release가 되어 있지 않음
 			process = this.readyQueue.dequeue();
 			this.fullSemaphoreReady.release();
 		} catch (InterruptedException e) {
@@ -82,6 +100,4 @@ public class Scheduler extends Thread{
 		}
 		return process;
 	}
-
-
 }

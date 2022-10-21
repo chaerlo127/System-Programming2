@@ -2,6 +2,8 @@ package main;
 
 import java.util.Scanner;
 import java.util.Vector;
+
+import main.InterruptHandler.EInterrupt;
 //		.program
 //		.data
 //		codeSize 40
@@ -73,7 +75,7 @@ public class Process {
 	}
 	
 	private void parseCode(Scanner scanner) {
-		String line = scanner.nextLine(); // 독립적으로 떨어진 것
+		String line = scanner.nextLine();
 		while (line.compareTo(".end") != 0) {
 			this.codeList.add(line);
 			line = scanner.nextLine();
@@ -93,12 +95,19 @@ public class Process {
 		}
 	}
 
-	public boolean executeInstruction() {
-		String instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용
-		this.setPC(this.getPC() + 1);
-		if (instruction.compareTo("halt") == 0){
-			// 프로그램 끝, 원래는 인터럭터를 걸어야 한다.
-			return false;
+	public boolean executeInstruction(InterruptHandler interruptHandler) {
+		String instruction = "";
+		while(instruction != null) {
+			instruction = this.codeList.get(this.getPC()); // pcb에서 가지고 있어야 할 내용
+			this.setPC(this.getPC() + 1);
+			
+			if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
+				interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
+				return true;
+			}
+			
+			if (instruction.compareTo("halt") == 0)	return false;
+			System.out.println(instruction);
 		}
 		return true;
 	}

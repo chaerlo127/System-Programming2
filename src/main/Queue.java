@@ -23,27 +23,24 @@ public class Queue<T> extends Vector<T> {
         }
     }
 
-    // => 추가 exception handling
-    public void enqueue(T element) {
-        if(this.currentSize < this.maxSize) {
-            // process 하나 세팅
-            this.set(this.tail, element);
-            // 실제로 메모리 주소 들어가는 것
-            this.tail = (this.tail + 1)%maxSize;
-            this.currentSize ++;
-        }
-    }
+	// ==> 추가 exception handling
+	public void enqueue(T element) {
+		if (this.currentSize < this.maxSize) {
+			this.set(this.tail, element);
+			this.tail = (this.tail + 1) % this.maxSize;
+			this.currentSize++;
+		}
+	}
 
-    // => 추가 exception handling
-    public T dequeue() {
-        T element = null;
-        if(this.currentSize>0) {
-            element = this.get(head);
-            this.head = (this.head + 1)%maxSize;
-            this.currentSize --;
-            return element;
-        }
-        return element;
-    }
-
+	// ==> 추가 exception handling
+	public T dequeue() {
+		T element = null;
+		if (this.currentSize > 0) {
+			element = this.get(this.head);
+			this.set(this.head, null);
+			this.head = (this.head + 1) % this.maxSize;
+			this.currentSize--;
+		}
+		return element;
+	}
 }
