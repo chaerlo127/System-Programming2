@@ -61,15 +61,10 @@ public class Process {
 		while (command.compareTo(".end") != 0) {
 			String operand = scanner.next();// codeSize
 			int size = Integer.parseInt(operand);
-			if(command.compareTo("codeSize") == 0) {
-				this.codeSize = size;
-			}else if(command.compareTo("dataSize") == 0) {
-				this.dataSize = size;
-			}else if(command.compareTo("stackSize") == 0) {
-				this.stackSize = size;
-			}else if(command.compareTo("heapSize") == 0) {
-				this.heapSize = size;
-			}
+			if(command.compareTo("codeSize") == 0) this.codeSize = size;
+			else if(command.compareTo("dataSize") == 0) this.dataSize = size;
+			else if(command.compareTo("stackSize") == 0) this.stackSize = size;
+			else if(command.compareTo("heapSize") == 0) this.heapSize = size;
 			command = scanner.next();
 		}
 	}
@@ -85,74 +80,64 @@ public class Process {
 	public void parse(Scanner scanner){
 		while (scanner.hasNext()) {
 			String token = scanner.next();
-			if(token.compareTo(".program") == 0){
-			}else if(token.compareTo(".code") == 0){
-				this.parseCode(scanner);
-			}else if(token.compareTo(".data") == 0){
-				this.parseData(scanner);
-			}else if(token.compareTo(".end") == 0){
-			}
+			if(token.compareTo(".program") == 0);
+			else if(token.compareTo(".code") == 0) this.parseCode(scanner);
+			else if(token.compareTo(".data") == 0)	this.parseData(scanner);
+			else if(token.compareTo(".end") == 0);
 		}
 	}
-
-	public boolean executeInstruction(InterruptHandler interruptHandler) {
-		this.currentThread =  Thread.currentThread();
-		
-		TimerInterrupt kilInterrupt = new TimerInterrupt();
-		 try {
-	            // 일정시간 지나면 현재 Thread 를 종료
-			 kilInterrupt.start();
-	            
-			 String instruction = "";
-				while(instruction != null) {
-					Thread.sleep(1000);
-					instruction = this.codeList.get(this.getPC());
-					this.setPC(this.getPC() + 1);
-					
-					if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
-						interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
-						return true;
-					}
-					
-					if (instruction.compareTo("halt") == 0)	return false;
-					System.out.println(instruction);
-				}
-				return true;
-	        } catch (Exception e) {
-	        	interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eTimeOut, this));
-	            
-	        } finally {
-	            try {
-	            	kilInterrupt.interrupt();
-	            	return true;
-	            } catch (Exception e) {}
-	        }
-		return false;
-	    }
 	
 	Thread currentThread;
-	public class TimerInterrupt extends Thread{
-		 @Override
-         public void run() {
-             try {
-                 Thread.sleep(5000);
-                 
-             } catch (InterruptedException e) {
-                 System.out.println("Interrupt 발생");
-                 return;
-                 
-             } catch (Exception e) {
-                 // 무시
-             }
-             
-             try {
-                 System.out.println("Time Out Interrupt");
-                 currentThread.interrupt();
-                 return;
-                 
-             } catch (Exception e) {
-                 // 무시
-             }
-         }
+	public boolean executeInstruction(InterruptHandler interruptHandler) {
+		this.currentThread =  Thread.currentThread();
+		TimerInterrupt kilInterrupt = new TimerInterrupt();
+		try {
+			kilInterrupt.start();
+
+			String instruction = "";
+			while (instruction != null) {
+				Thread.sleep(500);
+				instruction = this.codeList.get(this.getPC());
+				this.setPC(this.getPC() + 1);
+				
+				if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
+					interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
+					return true;
+				}
+				
+				if (instruction.compareTo("halt") == 0)	return false;
+				System.out.println(instruction);		
+			}
+			return true;
+		} catch (Exception e) {
+			interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eTimeOut, this));
+
+		} finally {
+			try {
+				kilInterrupt.interrupt();
+				return true;
+			} catch (Exception e) {
+			}
+		}
+		return false;
+	}
+
+	public class TimerInterrupt extends Thread {
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(3500);
+			} catch (InterruptedException e) {
+				return;
+			} catch (Exception e) {
+			}
+			try {
+				System.out.println("Time Out Interrupt");
+				currentThread.interrupt();
+				return;
+			} catch (Exception e) {
+				// 무시
+			}
+		}
 	}
 }

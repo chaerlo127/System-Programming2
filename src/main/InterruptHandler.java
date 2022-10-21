@@ -48,11 +48,12 @@ public class InterruptHandler {
         
     }
     private void HandleProcessStart(Process process) {
+    	System.out.println("------------------ Process Start ------------------");
     	this.scheduler.getReadyQueue().enqueue(process);
     }
 
     private void HandleProcessTerminate() {
-//        runningProcess = getReadyQueue().dequeue();
+    	System.out.println("------------------ Process Terminate ------------------");
     }
     
     // IO device Interrupt Start

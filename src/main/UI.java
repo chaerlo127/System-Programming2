@@ -11,10 +11,6 @@ public class UI extends Thread{
 	// run override 를 하면 자동으로 run을 해줌.
 	public void run() {
 		Loader loader = new Loader();
-		
-		// console command
-		// "r fileName" : run -> execute fileName
-		// "q" -> quit program
 		Scanner scanner = new Scanner(System.in);
 		String command = scanner.next();
 		while(command.compareTo("q") != 0) {
@@ -22,7 +18,6 @@ public class UI extends Thread{
 				String fileName = scanner.next();
 				Process process =loader.load(fileName); // process 생성
 				if(process != null) scheduler.enReadyQueue(process); // blocking 되면 문제가 발생될 수 있음.
-				
 			}
 			command = scanner.next();
 		}
