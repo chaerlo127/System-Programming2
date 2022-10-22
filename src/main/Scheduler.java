@@ -17,7 +17,7 @@ public class Scheduler extends Thread{
 	 * System.out.println(c)
 
 	 */
-	private static final int MAX_READY_COMMITS = 10;
+	private static final int MAX_READY_COMMITS = 4;
 	private boolean bPowerOn;
 	
 	private Semaphore fullSemaphoreReady;
@@ -37,6 +37,7 @@ public class Scheduler extends Thread{
 	public Queue<Process> getWaitQueue() {
 		return waitQueue;
 	}
+	
 	///////////////////////////////////////////////////////
 	public Scheduler() {
 		try {
@@ -71,8 +72,9 @@ public class Scheduler extends Thread{
 	
 	
 	//critical section -> ReadyQueue가 critical section은 아님.
-
-	public synchronized void enReadyQueue(Process process) {
+	//synchronized: 엄격하게 하나만 접근이 가능
+	//세마포어: 조금 더 자유로운 시작/종료 가능
+	public void enReadyQueue(Process process) {
 		// critical section
 		try {
 			this.fullSemaphoreReady.acquire();
@@ -83,19 +85,17 @@ public class Scheduler extends Thread{
 			this.interruptHandler.handle();
 			this.emptySemaphoreReady.release();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public synchronized Process deReadyQueue() {
+	public Process deReadyQueue() {
 		Process process = null;
 		try {
 			this.emptySemaphoreReady.acquire();// 여기서 죽음. release가 되어 있지 않음
 			process = this.readyQueue.dequeue();
 			this.fullSemaphoreReady.release();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return process;

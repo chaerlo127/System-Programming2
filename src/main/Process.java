@@ -96,7 +96,7 @@ public class Process {
 
 			String instruction = "";
 			while (instruction != null) {
-				Thread.sleep(500);
+				Thread.sleep(700);
 				instruction = this.codeList.get(this.getPC());
 				this.setPC(this.getPC() + 1);
 				
@@ -104,7 +104,6 @@ public class Process {
 					interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
 					return true;
 				}
-				
 				if (instruction.compareTo("halt") == 0)	return false;
 				System.out.println(instruction);		
 			}
