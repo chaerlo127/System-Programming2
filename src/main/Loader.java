@@ -24,7 +24,6 @@ public class Loader {
 		} catch (FileNotFoundException e) {
 			System.out.println("파일을 찾을 수 없습니다. 다시 입력해주세요");
 			JOptionPane.showMessageDialog(null, "파일을 찾을 수 없습니다. 다시 입력해주세요", "Warning", JOptionPane.WARNING_MESSAGE);
-//			e.printStackTrace();
 		}
 		return null;
 	}

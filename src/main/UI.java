@@ -29,10 +29,10 @@ public class UI extends Thread{
 		Loader loader = new Loader();
 		while(exit) {
 			if(!files.isEmpty()) {
-				Process process =loader.load(files.remove(0)); // process 생성
+				Process process =loader.load(files.remove(0)); // 파일들을 저장하고 있는 벡터에서 가장 첫 번째 것을 꺼내서 Scheduler에게 보낸다.
 				if(process != null) {
 					process.setProNum(processNum++);
-					scheduler.enReadyQueue(process); // blocking 되면 문제가 발생될 수 있음.
+					scheduler.enReadyQueue(process);
 				}  
 			} 
 		}

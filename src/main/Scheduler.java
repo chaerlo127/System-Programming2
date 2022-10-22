@@ -56,7 +56,6 @@ public class Scheduler extends Thread {
 	// idle process 상황 -> waitQueue 로 들어가야 함. 계속 돌아가면 cpu 점유율이 커진다.
 	public void run() {
 		while (bPowerOn) {
-//			System.out.println(this.emptySemaphoreReady.availablePermits());
 			if(this.emptySemaphoreReady.availablePermits() == 0) {
 				this.runningProcess = null;
 				this.interruptHandler.handle();
@@ -64,12 +63,12 @@ public class Scheduler extends Thread {
 			
 			if (this.runningProcess != null) {
 				this.interruptHandler.handle();
-				boolean result = this.runningProcess.executeInstruction(interruptHandler);// execute
+				this.runningProcess.executeInstruction(interruptHandler);// execute
 			}
 		}
 	}
 
-	// critical section -> ReadyQueue가 critical section은 아님.
+	// critical section
 	// synchronized: 엄격하게 하나만 접근이 가능
 	// 세마포어: 조금 더 자유로운 시작/종료 가능
 	public void enReadyQueue(Process process) {

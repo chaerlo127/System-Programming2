@@ -27,37 +27,26 @@ import main.InterruptHandler.EInterrupt;
 //		.end
 public class Process {
 
+	// attribute
 	private int PC;
-
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
 	private int proNum;
+	
 	//getters
 	public int getPC() {return PC;}
-
+	public int getCodeSize() {return codeSize;}
+	public int getDataSize() {return dataSize;}
+	public int getStackSize() {return stackSize;}
+	public int getHeapSize() {return heapSize;}
+	public Vector<String> getCodeList() {return codeList;}
+	public int getProNum() {return this.proNum;}
+	
+	//setter
+	public void setProNum(int proNum) {this.proNum = proNum;}
 	public void setPC(int PC) {this.PC = PC;}
-	public int getCodeSize() {
-		return codeSize;
-	}
-	public int getDataSize() {
-		return dataSize;
-	}
-	public int getStackSize() {
-		return stackSize;
-	}
-	public int getHeapSize() {
-		return heapSize;
-	}
-	public Vector<String> getCodeList() {
-		return codeList;
-	}
-	public void setProNum(int proNum) {
-		this.proNum = proNum;
-	}
-	public int getProNum() {
-		return this.proNum;
-	}
 
+	// constructor
 	public Process() {
 		this.codeList = new Vector<String>();
 	}
@@ -90,34 +79,21 @@ public class Process {
 			else if(token.compareTo(".code") == 0) this.parseCode(scanner);
 			else if(token.compareTo(".data") == 0)	this.parseData(scanner);
 			else if(token.compareTo(".end") == 0);
+
 		}
 	}
 	
 	Thread currentThread;
-	
 	public boolean executeInstruction(InterruptHandler interruptHandler) {
 		System.out.println("Process: " + this.getProNum());
 		this.currentThread =  Thread.currentThread();
 		TimerInterrupt kilInterrupt = new TimerInterrupt();
 		try {
 			kilInterrupt.start();
-
 			String instruction = "";
 			while (instruction != null) {
 				instruction = this.codeList.get(this.getPC());
-				this.setPC(this.getPC() + 1);
-				
-				if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
-					interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
-					System.out.println("Interrupt Start");
-					return false;
-				}
-				
-				if (instruction.compareTo("halt") == 0)	{
-					interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessTerminated, this));
-					System.out.println("halt");
-					return false;
-				}
+				if(!checkInterrupt(instruction, interruptHandler)) return false;
 				Thread.sleep(700);
 				System.out.println(instruction);		
 			}
@@ -133,6 +109,23 @@ public class Process {
 			}
 		}
 		return false;
+	}
+
+	// interrupt 를 확인한다.
+	private boolean checkInterrupt(String instruction, InterruptHandler interruptHandler) {
+		this.setPC(this.getPC() + 1);
+		if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
+			interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
+			System.out.println("Interrupt Start");
+			return false;
+		}
+		
+		if (instruction.compareTo("halt") == 0)	{
+			interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessTerminated, this));
+			System.out.println("halt");
+			return false;
+		}
+		return true;
 	}
 
 	public class TimerInterrupt extends Thread {

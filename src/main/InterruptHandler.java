@@ -60,7 +60,6 @@ public class InterruptHandler {
     	System.out.println("------------------  [" +process.getProNum()+  "] IO Interrupt Start ------------------");
     	this.scheduler.getWaitQueue().enqueue(process);
     	this.set(this.makeInterrupt(EInterrupt.eIOTerminated, process));
-//    	this.HandleIOTerminate();
     }
     
     // IO device Interrupt Terminate
