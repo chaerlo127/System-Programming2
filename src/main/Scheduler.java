@@ -37,7 +37,6 @@ public class Scheduler extends Thread{
 	public Queue<Process> getWaitQueue() {
 		return waitQueue;
 	}
-	
 	///////////////////////////////////////////////////////
 	public Scheduler() {
 		try {
@@ -53,7 +52,6 @@ public class Scheduler extends Thread{
 			
 			this.runningProcess = null;
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -63,6 +61,8 @@ public class Scheduler extends Thread{
 	public void run() {
 		while (bPowerOn) {
 			this.runningProcess = this.deReadyQueue(); // dequeue가 없으면 block
+			if(this.runningProcess.getPC() == 0) this.interruptHandler.handle(); 
+			// 한번도 수행한 적이 없는 프로세스라면 StartInterrupt를 발생하기 때문에 확인이 필요
 			if(this.runningProcess!= null) {
 				boolean result = this.runningProcess.executeInstruction(interruptHandler);// execute
 				this.interruptHandler.handle();
@@ -70,19 +70,15 @@ public class Scheduler extends Thread{
 		}
 	}
 	
-	
 	//critical section -> ReadyQueue가 critical section은 아님.
 	//synchronized: 엄격하게 하나만 접근이 가능
 	//세마포어: 조금 더 자유로운 시작/종료 가능
 	public void enReadyQueue(Process process) {
-		// critical section
 		try {
 			this.fullSemaphoreReady.acquire();
-//			this.readyQueue.enqueue(process);
 			// enqueue가 아니라, interrupt를 해서 생성한 후에 그 안에 enqueue를 한다
 			if(process.getPC() == 0) interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessStarted, process));
-			else this.readyQueue.enqueue(process);
-			this.interruptHandler.handle();
+			this.readyQueue.enqueue(process);
 			this.emptySemaphoreReady.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

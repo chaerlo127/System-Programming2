@@ -48,7 +48,7 @@ public class InterruptHandler {
         
     }
     private void HandleProcessStart(Process process) {
-    	System.out.println("------------------ Process Input ------------------");
+    	System.out.println("------------------ Process Start ------------------");
     	this.scheduler.getReadyQueue().enqueue(process);
     }
 
