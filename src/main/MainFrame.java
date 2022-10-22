@@ -15,7 +15,7 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private UI ui;
 	public MainFrame(UI ui) {
-		this.setSize(300, 100); // 너비, 길이
+		this.setSize(350, 100); // 너비, 길이
 		this.setLocationRelativeTo(null); // 가운데로 맞추기
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.ui = ui;
@@ -49,6 +49,10 @@ public class MainFrame extends JFrame {
 				file = new File("data" + "/" + EJButton.eExe1.getName());
 			}else if(e.getActionCommand().equals(EJButton.eExe2.getName())) {
 				file = new File("data" + "/" + EJButton.eExe2.getName());
+			}else if(e.getActionCommand().equals(EJButton.eExe3.getName())) {
+				file = new File("data" + "/" + EJButton.eExe3.getName());
+			}else if(e.getActionCommand().equals(EJButton.eExit.getName())) {
+				System.exit(0);
 			}
 			ui.getFile(file);
 		}

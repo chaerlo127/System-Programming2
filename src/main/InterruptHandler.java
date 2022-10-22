@@ -48,8 +48,7 @@ public class InterruptHandler {
         
     }
     private void HandleProcessStart(Process process) {
-    	System.out.println("------------------ Process Start ------------------");
-    	this.scheduler.getReadyQueue().enqueue(process);
+    	System.out.println("------------------ [" +process.getProNum()+  "] Process Start ------------------");
     }
 
     private void HandleProcessTerminate() {
@@ -58,22 +57,23 @@ public class InterruptHandler {
     
     // IO device Interrupt Start
     private void HandleIOStart(Process process) {
-    	System.out.println("------------------ IO Interrupt Start ------------------");
+    	System.out.println("------------------  [" +process.getProNum()+  "] IO Interrupt Start ------------------");
     	this.scheduler.getWaitQueue().enqueue(process);
     	this.set(this.makeInterrupt(EInterrupt.eIOTerminated, process));
+//    	this.HandleIOTerminate();
     }
     
     // IO device Interrupt Terminate
     private void HandleIOTerminate() {
     	Process process = this.scheduler.getWaitQueue().dequeue();
-    	System.out.println("------------------ IO Interrupt Finished ------------------");
+    	System.out.println("------------------  [" +process.getProNum()+  "] IO Interrupt Finished ------------------");
     	this.scheduler.enReadyQueue(process);
     }
     
     // Timeout Interrupt 
     private void HandleTimeOut(Process process) {
         // context switching
-    	System.out.println("------------------ Time Out Interrupt ------------------");
+    	System.out.println("------------------  [" +process.getProNum()+  "] Time Out Interrupt ------------------");
     	this.scheduler.enReadyQueue(process);
     }
     

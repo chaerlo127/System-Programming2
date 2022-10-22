@@ -31,7 +31,7 @@ public class Process {
 
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
-	
+	private int proNum;
 	//getters
 	public int getPC() {return PC;}
 
@@ -50,6 +50,12 @@ public class Process {
 	}
 	public Vector<String> getCodeList() {
 		return codeList;
+	}
+	public void setProNum(int proNum) {
+		this.proNum = proNum;
+	}
+	public int getProNum() {
+		return this.proNum;
 	}
 
 	public Process() {
@@ -88,7 +94,9 @@ public class Process {
 	}
 	
 	Thread currentThread;
+	
 	public boolean executeInstruction(InterruptHandler interruptHandler) {
+		System.out.println("Process: " + this.getProNum());
 		this.currentThread =  Thread.currentThread();
 		TimerInterrupt kilInterrupt = new TimerInterrupt();
 		try {
@@ -96,15 +104,21 @@ public class Process {
 
 			String instruction = "";
 			while (instruction != null) {
-				Thread.sleep(700);
 				instruction = this.codeList.get(this.getPC());
 				this.setPC(this.getPC() + 1);
 				
 				if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
 					interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
-					return true;
+					System.out.println("Interrupt Start");
+					return false;
 				}
-				if (instruction.compareTo("halt") == 0)	return false;
+				
+				if (instruction.compareTo("halt") == 0)	{
+					interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessTerminated, this));
+					System.out.println("halt");
+					return false;
+				}
+				Thread.sleep(700);
 				System.out.println(instruction);		
 			}
 			return true;
@@ -135,7 +149,6 @@ public class Process {
 				currentThread.interrupt();
 				return;
 			} catch (Exception e) {
-				// 무시
 			}
 		}
 	}

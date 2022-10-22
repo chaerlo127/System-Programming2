@@ -12,12 +12,14 @@ public class Loader {
 	// 프로세스 보고 너가 만들어라
 	public Process load(File exeName) {
 		// file => process
+		Process process = null;
 		try {
-//			File file = new File("data" + "/" + exeName);
-			Scanner scanner = new Scanner(exeName);
-			Process process = new Process();
-			process.parse(scanner);
-			scanner.close();
+			if(exeName != null) {
+				Scanner scanner = new Scanner(exeName);
+				process = new Process();
+				process.parse(scanner);
+				scanner.close();
+			}
 			return process;
 		} catch (FileNotFoundException e) {
 			System.out.println("파일을 찾을 수 없습니다. 다시 입력해주세요");
