@@ -16,7 +16,7 @@ public class Loader {
 		try {
 			if(file != null) {
 				Scanner scanner = new Scanner(file);
-				process = new Process();
+				process = new Process(file.getName());
 				process.parse(scanner);
 				scanner.close();
 			}

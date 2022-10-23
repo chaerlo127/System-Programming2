@@ -28,6 +28,7 @@ import main.InterruptHandler.EInterrupt;
 public class Process {
 
 	// attribute
+	private String processName;
 	private int PC;
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
@@ -55,8 +56,9 @@ public class Process {
 	public void setPC(int PC) {this.PC = PC;}
 
 	// constructor
-	public Process() {
+	public Process(String processName) {
 		this.codeList = new Vector<String>();
+		this.processName = processName;
 		this.compare =-99;
 		this.endLoopPC = -99;
 	}
@@ -98,7 +100,7 @@ public class Process {
 	
 	Thread currentThread;
 	public boolean executeInstruction(InterruptHandler interruptHandler) {
-		System.out.println("Process: " + this.getProNum());
+		System.out.println("Process: " + this.getProNum() + "[" + this.processName + "]");
 		this.currentThread =  Thread.currentThread();
 		TimerInterrupt kilInterrupt = new TimerInterrupt();
 		try {
