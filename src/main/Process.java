@@ -97,13 +97,10 @@ public class Process {
 			String instruction = "";
 			while (instruction != null) {
 				instruction = this.codeList.get(this.getPC());
-				
 				translateInstruction(instruction);
-				
-				
+				System.out.println(instruction);
 				if(!checkInterrupt(instruction, interruptHandler)) return false;
 				Thread.sleep(700);
-				System.out.println(instruction);		
 			}
 			return true;
 		} catch (Exception e) {
@@ -122,23 +119,29 @@ public class Process {
 	private void translateInstruction(String instruction) {
 		String[] str = instruction.split(" ");
 		
-		if(str[0].equals("move")) {
+		if(str[0].equals("move")) { // move
 			str[1] = str[1].replace("@", "");
 			str[1] = str[1].replace(",", "");
-			if(str[2].indexOf("r")>=0) this.dataSegment[Integer.parseInt(str[1])/4] = r;
-			else this.dataSegment[Integer.parseInt(str[1])/4] = str[2];
-		}else if(str[0].equals("add")) {
+			if(str[2].indexOf("r")>=0) this.dataSegment[Integer.parseInt(str[1])/4] = r; // move @4, r0
+			else this.dataSegment[Integer.parseInt(str[1])/4] = str[2]; // move @8, 0
+		}else if(str[0].equals("add")) { // add
 			//add @8, 1
 			str[1] = str[1].replace("@", "");
 			str[1] = str[1].replace(",", "");
 			this.dataSegment[Integer.parseInt(str[1])/4]
 					= String.valueOf(Integer.parseInt(dataSegment[Integer.parseInt(str[1])/4]) 
 							+ Integer.parseInt(str[2]));
-		}else if(str[0].equals("interrupt")) {
+		}else if(str[0].equals("interrupt")) { // interrupt
 			if(str[1].equals("read")) {
 				r = "5"	; // 실제로는 read를 해야하지만 interrupt가 발생하기 때문에 이를 5로 그냥 저장하고 return을 해준다.
-			}else if(str[0].equals("write")) {
+			}else if(str[1].equals("write")) {
 				// System.out.println으로 해주기
+				int a = 0; 
+				System.out.print("DataSegment Variable: ");
+				while(dataSegment[a] != null) {
+					System.out.print(dataSegment[a++] + "\t");
+				}
+				System.out.println();
 			}
 		}
 		
