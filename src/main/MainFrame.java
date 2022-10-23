@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -10,20 +11,24 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import constraint.Constants.EJButton;
 
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private UI ui;
+	private JLabel label;
 	private JLabel count;
+	private JLabel list;
 	public MainFrame(UI ui) {
-		this.setSize(400, 100); // 너비, 길이
+		this.setSize(400, 210); // 너비, 길이
 		this.setLocationRelativeTo(null); // 가운데로 맞추기
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.ui = ui;
 		JPanel btnPanel = new JPanel();
 		JPanel processCount = new JPanel();
+		JPanel listPanel = new JPanel();
 		ActionHandler actionHandler = new ActionHandler();
 	
 		for (EJButton ejButton : EJButton.values()) {
@@ -33,12 +38,22 @@ public class MainFrame extends JFrame {
 			btnPanel.add(btn);
 		}
 		
-		JLabel label = new JLabel("Click File Count: ");
+		label = new JLabel("Click File Count: ");
 		processCount.add(label);
+		
 		count = new JLabel(String.valueOf(ui.getCount()));
 		processCount.add(count);
+		
+		list = new JLabel(ui.getFileList());
+		list.setHorizontalAlignment(JLabel.CENTER);
+		JScrollPane jScrollPane = new JScrollPane(list);
+		jScrollPane.setPreferredSize(new Dimension(300, 100));
+		listPanel.add(jScrollPane);
+	
+		
 		this.add(btnPanel, BorderLayout.NORTH);
-		this.add(processCount, BorderLayout.SOUTH);
+		this.add(processCount, BorderLayout.CENTER);
+		this.add(listPanel, BorderLayout.SOUTH);
 	}
 
 	private File open() {
@@ -66,8 +81,9 @@ public class MainFrame extends JFrame {
 				ui.exitMtd(false);
 				System.exit(0);
 			}
-			ui.getFile(file);
+			ui.setFile(file);
 			count.setText(String.valueOf(ui.getCount()));
+			list.setText(ui.getFileList());
 		}
 	}
 }
