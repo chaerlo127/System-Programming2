@@ -142,13 +142,7 @@ public class Process {
 			if(str[1].equals("read")) {
 				r = "5"	; // 실제로는 read를 해야하지만 interrupt가 발생하기 때문에 이를 5로 그냥 저장하고 return을 해준다.
 			}else if(str[1].equals("write")) {
-				// System.out.println으로 해주기
-				int a = 0; 
-				System.out.print("DataSegment Variable: ");
-				while(dataSegment[a] != null) {
-					System.out.print(dataSegment[a++] + ", ");
-				}
-				System.out.println();
+				// System.out.println으로 해주기 -> 여기에 작성해야 하는 것을 halt 부분으로 옮겨줌. write interrupt 후에 써와야 하기 때문
 			}
 		}else if(str[0].equals("compare")) {
 			this.replaceForArray(str, 1);
@@ -172,7 +166,14 @@ public class Process {
 			if(this.compare != realCompare) {
 				this.PC = this.loopPC;
 			}
-		}	
+		}else if(str[0].equals("halt")) {
+			int a = 0; 
+			System.out.print("DataSegment Variable: ");
+			while(dataSegment[a] != null) {
+				System.out.print(dataSegment[a++] + ", ");
+			}
+			System.out.println();
+		}
 	}
 	
 	private void replaceForArray(String[] str, int index) {
@@ -192,7 +193,6 @@ public class Process {
 		
 		if (instruction.compareTo("halt") == 0)	{
 			interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessTerminated, this));
-			System.out.println("halt");
 			return false;
 		}
 		return true;
