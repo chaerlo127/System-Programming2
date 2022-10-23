@@ -5,35 +5,25 @@ import java.util.concurrent.Semaphore;
 import main.InterruptHandler.EInterrupt;
 
 public class Scheduler extends Thread {
-	/**
-	 * 
-	 * int a = 0; int b = scanner.nextInt(System.in); int c = 0; while(a>b){ c =+ 1;
-	 * } b = c; System.out.println(c)
-	 * 
-	 */
+	// attribute
 	private static final int MAX_READY_COMMITS = 4;
-	private boolean bPowerOn;
 
 	private Semaphore fullSemaphoreReady;
 	private Semaphore emptySemaphoreReady;
+	
 	private Queue<Process> readyQueue;
-
 	private Queue<Process> waitQueue;
+	
+	private boolean bPowerOn;
 	private InterruptHandler interruptHandler;
-
 	private Process runningProcess;
 
-	// critical section
 	// getters
-	public Queue<Process> getReadyQueue() {
-		return readyQueue;
-	}
+	public Queue<Process> getReadyQueue() {return readyQueue;}
 
-	public Queue<Process> getWaitQueue() {
-		return waitQueue;
-	}
+	public Queue<Process> getWaitQueue() {return waitQueue;}
 
-	///////////////////////////////////////////////////////
+	// constructor
 	public Scheduler() {
 		try {
 			this.bPowerOn = true;
@@ -52,7 +42,7 @@ public class Scheduler extends Thread {
 		}
 	}
 
-	// execute, 실행만 한다.
+	// execute
 	// idle process 상황 -> waitQueue 로 들어가야 함. 계속 돌아가면 cpu 점유율이 커진다.
 	public void run() {
 		while (bPowerOn) {
@@ -82,7 +72,10 @@ public class Scheduler extends Thread {
 			e.printStackTrace();
 		}
 	}
-
+	
+	// critical section
+	// synchronized: 엄격하게 하나만 접근이 가능
+	// 세마포어: 조금 더 자유로운 시작/종료 가능
 	public Process deReadyQueue() {
 		Process process = null;
 		try {

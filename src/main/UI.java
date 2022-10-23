@@ -4,20 +4,14 @@ import java.io.File;
 import java.util.Vector;
 
 public class UI extends Thread{
+	// attribute
 	private Scheduler scheduler;
 	private Vector<File> files;
 	private Vector<String> fileName;
 	private boolean exit;
 	private int processNum;
 	
-	public UI(Scheduler scheduler){
-		this.scheduler = scheduler; 
-		this.files = new Vector<>();
-		this.fileName = new Vector<>();
-		exit = true;
-		processNum = 0;
-	}
-	
+	// setters
 	public void setFile(File file) {
 		if(file != null) {
 			this.files.add(file);
@@ -25,12 +19,10 @@ public class UI extends Thread{
 			this.processNum++;
 		}
 	}
-	public int getCount() {
-		return this.processNum;
-	}
-	public void exitMtd(boolean exit) {
-		this.exit = exit;
-	}
+	public void exitMtd(boolean exit) {this.exit = exit;}
+	
+	// getters
+	public int getCount() {return this.processNum;}
 	public String getFileList() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
@@ -45,7 +37,16 @@ public class UI extends Thread{
 		return sb.toString();
 	}
 	
-	// run override 를 하면 자동으로 run을 해줌.
+	// constructor
+	public UI(Scheduler scheduler){
+		this.scheduler = scheduler; 
+		this.files = new Vector<>();
+		this.fileName = new Vector<>();
+		exit = true;
+		processNum = 0;
+	}
+	
+	@Override
 	public void run() {
 		Loader loader = new Loader();
 		while(exit) {

@@ -17,10 +17,14 @@ import constraint.Constants.EJButton;
 
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
+	
+	// attribute 
 	private UI ui;
 	private JLabel label;
 	private JLabel count;
 	private JLabel list;
+	
+	// constructor
 	public MainFrame(UI ui) {
 		this.setSize(400, 210); // 너비, 길이
 		this.setLocationRelativeTo(null); // 가운데로 맞추기
@@ -31,6 +35,7 @@ public class MainFrame extends JFrame {
 		JPanel listPanel = new JPanel();
 		ActionHandler actionHandler = new ActionHandler();
 	
+		// button part
 		for (EJButton ejButton : EJButton.values()) {
 			JButton btn = new JButton(ejButton.getLabel());
 			btn.setActionCommand(ejButton.getName());
@@ -38,19 +43,21 @@ public class MainFrame extends JFrame {
 			btnPanel.add(btn);
 		}
 		
+		// count part
 		label = new JLabel("Click File Count: ");
 		processCount.add(label);
 		
 		count = new JLabel(String.valueOf(ui.getCount()));
 		processCount.add(count);
 		
+		// list part
 		list = new JLabel(ui.getFileList());
 		list.setHorizontalAlignment(JLabel.CENTER);
 		JScrollPane jScrollPane = new JScrollPane(list);
 		jScrollPane.setPreferredSize(new Dimension(300, 100));
 		listPanel.add(jScrollPane);
 	
-		
+		// frame add part
 		this.add(btnPanel, BorderLayout.NORTH);
 		this.add(processCount, BorderLayout.CENTER);
 		this.add(listPanel, BorderLayout.SOUTH);

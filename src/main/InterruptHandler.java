@@ -12,45 +12,48 @@ public class InterruptHandler {
         eProcessTerminated,
     }
 
+    // class
     public class Interrupt{
+    	// attribute
         private EInterrupt eInterrupt;
         private Process process;
         
+        // getters
         public EInterrupt geteInterrupt() {return eInterrupt;}
         public Process getProcess() {return process;}
         
+        // constructors
         public Interrupt(EInterrupt eInterrupt, Process process){
             this.eInterrupt = eInterrupt;
             this.process = process;
         }
     }
-    
+    // attribute
     private Scheduler scheduler;
-    // critical section
+    	// critical section
     private Queue<Interrupt> interruptQ;
-    public Interrupt get() {
-        return interruptQ.dequeue();
-    }
-    public void set(Interrupt Interrupt) {
-        this.interruptQ.enqueue(Interrupt);
-    }
-    public Interrupt makeInterrupt(EInterrupt eInterrupt, Process process) {
-    	return new Interrupt(eInterrupt, process);
-    }
     
-    ///////////////////////////////////////////////////////
+    // getters and setters 
+    public Interrupt get() {return interruptQ.dequeue();}
+    public void set(Interrupt Interrupt) {this.interruptQ.enqueue(Interrupt);}
+    
+    public Interrupt makeInterrupt(EInterrupt eInterrupt, Process process) {return new Interrupt(eInterrupt, process);}
+    
     // constructor
     public InterruptHandler(Scheduler scheduler){
         this.interruptQ = new Queue<Interrupt>();
         this.scheduler = scheduler;
         
     }
+    
+    // process start
     private void HandleProcessStart(Process process) {
     	System.out.println("------------------ [" +process.getProNum()+  "] Process Start ------------------");
     }
 
+    // process terminate
     private void HandleProcessTerminate(Process process) {
-    	System.out.println("------------------ [" +process.getProNum()+  "] Process Terminate ------------------");
+    	// 끝났을 때에는 끝난 위치에서 콘솔로 보여줌. 
     }
     
     // IO device Interrupt Start
@@ -63,13 +66,11 @@ public class InterruptHandler {
     // IO device Interrupt Terminate
     private void HandleIOTerminate() {
     	Process process = this.scheduler.getWaitQueue().dequeue();
-    	
     	this.scheduler.enReadyQueue(process);
     }
     
     // Timeout Interrupt 
     private void HandleTimeOut(Process process) {
-        // context switching
     	this.scheduler.enReadyQueue(process);
     }
     

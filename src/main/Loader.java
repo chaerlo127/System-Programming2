@@ -6,10 +6,8 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-//file : instruction, size, register size
 public class Loader {
-	// 객체 지향적으로 만들기
-	// 프로세스 보고 너가 만들어라
+	
 	public Process load(File file) {
 		// file => process
 		Process process = null;

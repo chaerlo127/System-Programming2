@@ -5,8 +5,8 @@ import java.util.Vector;
 // template class -> new 할 때, data type도 같이 선언을 해준다.
 // throws exception 필요
 public class Queue<T> extends Vector<T> {
-    private final int MAX_NUM_ELEMENT = 10;
     private static final long serialVersionUID = 1L;
+    private final int MAX_NUM_ELEMENT = 10;
 
     //circular queue
     private int head, tail, currentSize, maxSize;
