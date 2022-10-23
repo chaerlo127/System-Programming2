@@ -133,6 +133,10 @@ public class Process {
 		if(str[0].equals("move")) { // move
 			this.replaceForArray(str, 1);
 			if(str[2].indexOf("r")>=0) this.dataSegment[Integer.parseInt(str[1])/4] = r; // move @4, r0
+			else if(str[2].indexOf("@")>=0) {
+				this.replaceForArray(str, 2);
+				this.dataSegment[Integer.parseInt(str[1])/4] = this.dataSegment[Integer.parseInt(str[2])/4];
+			}
 			else this.dataSegment[Integer.parseInt(str[1])/4] = str[2]; // move @8, 0
 		}else if(str[0].equals("add")) { // add
 			//add @8, 1

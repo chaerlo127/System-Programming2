@@ -16,6 +16,7 @@ jumpGraterThan loopEnd
 add @0, 1
 jump label
 .label loopEnd
+move @4, @8
 interrupt write
 halt
 .end
