@@ -10,7 +10,7 @@ public class Main {
 		MainFrame mf = new MainFrame(ui);
 		mf.setVisible(true); //main frame 그림.
 		
-		ui.start(); // button 클릭하면 생기도록
+		ui.start();
 		scheduler.start();
 	}
 }

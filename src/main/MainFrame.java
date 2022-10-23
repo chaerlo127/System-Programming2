@@ -52,6 +52,7 @@ public class MainFrame extends JFrame {
 			}else if(e.getActionCommand().equals(EJButton.eExe3.getName())) {
 				file = new File("data" + "/" + EJButton.eExe3.getName());
 			}else if(e.getActionCommand().equals(EJButton.eExit.getName())) {
+				ui.exitMtd(false);
 				System.exit(0);
 			}
 			ui.getFile(file);

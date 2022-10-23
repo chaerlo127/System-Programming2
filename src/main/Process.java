@@ -32,7 +32,6 @@ public class Process {
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
 	private int proNum;
-	
 	//getters
 	public int getPC() {return PC;}
 	public int getCodeSize() {return codeSize;}

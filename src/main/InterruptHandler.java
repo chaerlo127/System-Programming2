@@ -51,8 +51,8 @@ public class InterruptHandler {
     	System.out.println("------------------ [" +process.getProNum()+  "] Process Start ------------------");
     }
 
-    private void HandleProcessTerminate() {
-    	System.out.println("------------------ Process Terminate ------------------");
+    private void HandleProcessTerminate(Process process) {
+    	System.out.println("------------------ [" +process.getProNum()+  "] Process Terminate ------------------");
     }
     
     // IO device Interrupt Start
@@ -84,7 +84,7 @@ public class InterruptHandler {
 				HandleProcessStart(interrupt.getProcess());
 				break;
 			case eProcessTerminated:
-				HandleProcessTerminate();
+				HandleProcessTerminate(interrupt.getProcess());
 				break;
 			case eIOStarted:
 				HandleIOStart(interrupt.getProcess());

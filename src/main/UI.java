@@ -10,7 +10,7 @@ public class UI extends Thread{
 	private int processNum;
 
 	public UI(Scheduler scheduler){
-		this.scheduler = scheduler; // ui에게 Loader를 장착시켜둠.
+		this.scheduler = scheduler; 
 		this.files = new Vector<>();
 		exit = true;
 		processNum = 1;

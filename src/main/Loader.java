@@ -10,12 +10,12 @@ import javax.swing.JOptionPane;
 public class Loader {
 	// 객체 지향적으로 만들기
 	// 프로세스 보고 너가 만들어라
-	public Process load(File exeName) {
+	public Process load(File file) {
 		// file => process
 		Process process = null;
 		try {
-			if(exeName != null) {
-				Scanner scanner = new Scanner(exeName);
+			if(file != null) {
+				Scanner scanner = new Scanner(file);
 				process = new Process();
 				process.parse(scanner);
 				scanner.close();

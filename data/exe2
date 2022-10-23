@@ -17,6 +17,6 @@ add @8, -1
 jump label
 .label loopEnd
 move @0, @8
-interrupt write
+interrupt writeS
 halt
 .end
