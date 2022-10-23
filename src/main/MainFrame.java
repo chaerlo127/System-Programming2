@@ -1,6 +1,6 @@
 package main;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -8,26 +8,38 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import constraint.Constants.EJButton;
 
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private UI ui;
+	private JLabel count;
 	public MainFrame(UI ui) {
 		this.setSize(350, 100); // 너비, 길이
 		this.setLocationRelativeTo(null); // 가운데로 맞추기
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.ui = ui;
+		JPanel btnPanel = new JPanel();
+		JPanel processCount = new JPanel();
 		ActionHandler actionHandler = new ActionHandler();
-		this.setLayout(new FlowLayout(FlowLayout.LEFT));
-		
+	
 		for (EJButton ejButton : EJButton.values()) {
 			JButton btn = new JButton(ejButton.getName());
 			btn.setActionCommand(ejButton.getName());
 			btn.addActionListener(actionHandler);
-			this.add(btn);
+			btnPanel.add(btn);
 		}
+		
+		JLabel label = new JLabel("Open Process Count: ");
+		processCount.add(label);
+		count = new JLabel(String.valueOf(ui.getCount()));
+		processCount.add(count);
+		
+		this.add(btnPanel, BorderLayout.NORTH);
+		this.add(processCount, BorderLayout.SOUTH);
 	}
 
 	private File open() {
@@ -56,6 +68,7 @@ public class MainFrame extends JFrame {
 				System.exit(0);
 			}
 			ui.getFile(file);
+			count.setText(String.valueOf(ui.getCount()));
 		}
 	}
 }
