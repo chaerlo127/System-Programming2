@@ -32,8 +32,15 @@ public class Process {
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
 	private int proNum;
-	private String[] dataSegment;
-	private String r;
+	private String[] dataSegment; // dataSegment
+	private String r; // interrupt read variable
+	private int compare; // compare -> GraterThan
+	private int realCompare; // 숫자가 커야 하는지 작아야하는지
+	private int loopPC; // change PC for return 
+	private int endLoopPC;
+	
+	
+	
 	//getters
 	public int getPC() {return PC;}
 	public int getCodeSize() {return codeSize;}
@@ -50,6 +57,8 @@ public class Process {
 	// constructor
 	public Process() {
 		this.codeList = new Vector<String>();
+		this.compare =-99;
+		this.endLoopPC = -99;
 	}
 	
 	private void parseData(Scanner scanner) {
@@ -120,14 +129,12 @@ public class Process {
 		String[] str = instruction.split(" ");
 		
 		if(str[0].equals("move")) { // move
-			str[1] = str[1].replace("@", "");
-			str[1] = str[1].replace(",", "");
+			this.replaceForArray(str, 1);
 			if(str[2].indexOf("r")>=0) this.dataSegment[Integer.parseInt(str[1])/4] = r; // move @4, r0
 			else this.dataSegment[Integer.parseInt(str[1])/4] = str[2]; // move @8, 0
 		}else if(str[0].equals("add")) { // add
 			//add @8, 1
-			str[1] = str[1].replace("@", "");
-			str[1] = str[1].replace(",", "");
+			this.replaceForArray(str, 1);
 			this.dataSegment[Integer.parseInt(str[1])/4]
 					= String.valueOf(Integer.parseInt(dataSegment[Integer.parseInt(str[1])/4]) 
 							+ Integer.parseInt(str[2]));
@@ -139,13 +146,40 @@ public class Process {
 				int a = 0; 
 				System.out.print("DataSegment Variable: ");
 				while(dataSegment[a] != null) {
-					System.out.print(dataSegment[a++] + "\t");
+					System.out.print(dataSegment[a++] + ", ");
 				}
 				System.out.println();
 			}
-		}
-		
+		}else if(str[0].equals("compare")) {
+			this.replaceForArray(str, 1);
+			this.replaceForArray(str, 2);
+			
+			int index1 = Integer.parseInt(str[1])/4; // index 1
+			int index2 = Integer.parseInt(str[2])/4; // index 2
+			this.compare = Integer.compare(Integer.parseInt(this.dataSegment[index1]), 
+					Integer.parseInt(this.dataSegment[index2]));
+		}else if(str[0].equals(".label")) {
+			if(str[1].equals("loop")) {
+				this.loopPC = this.PC;
+			}
+		}else if(str[0].equals("jumpGraterThan")) {
+			realCompare = 1;
+			if(compare==realCompare) { // left > right 인 경우
+				this.PC = this.endLoopPC; // 저장했던 PC로 변경해서 다시 loop을 실행한다. 
+			}
+		}else if(str[0].equals("jump")) {
+			this.endLoopPC = this.getPC() + 1;
+			if(this.compare != realCompare) {
+				this.PC = this.loopPC;
+			}
+		}	
 	}
+	
+	private void replaceForArray(String[] str, int index) {
+		str[index] = str[index].replace("@", "");
+		str[index] = str[index].replace(",", "");
+	}
+	
 	// interrupt 를 확인한다.
 	private boolean checkInterrupt(String instruction, InterruptHandler interruptHandler) {
 		this.setPC(this.getPC() + 1);

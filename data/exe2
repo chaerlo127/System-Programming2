@@ -13,10 +13,10 @@ move @8, r0
 .label loop
 compare @4, @8
 jumpGraterThan loopEnd
-add @8, -1
+add @8, 2
 jump label
 .label loopEnd
 move @0, @8
-interrupt writeS
+interrupt write
 halt
 .end
