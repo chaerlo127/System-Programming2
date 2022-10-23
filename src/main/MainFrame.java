@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
 	private UI ui;
 	private JLabel count;
 	public MainFrame(UI ui) {
-		this.setSize(350, 100); // 너비, 길이
+		this.setSize(400, 100); // 너비, 길이
 		this.setLocationRelativeTo(null); // 가운데로 맞추기
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.ui = ui;
@@ -27,13 +27,13 @@ public class MainFrame extends JFrame {
 		ActionHandler actionHandler = new ActionHandler();
 	
 		for (EJButton ejButton : EJButton.values()) {
-			JButton btn = new JButton(ejButton.getName());
+			JButton btn = new JButton(ejButton.getLabel());
 			btn.setActionCommand(ejButton.getName());
 			btn.addActionListener(actionHandler);
 			btnPanel.add(btn);
 		}
 		
-		JLabel label = new JLabel("Open Process Count: ");
+		JLabel label = new JLabel("Click File Count: ");
 		processCount.add(label);
 		count = new JLabel(String.valueOf(ui.getCount()));
 		processCount.add(count);

@@ -71,7 +71,7 @@ public class Scheduler extends Thread {
 	// critical section
 	// synchronized: 엄격하게 하나만 접근이 가능
 	// 세마포어: 조금 더 자유로운 시작/종료 가능
-	public synchronized void enReadyQueue(Process process) {
+	public void enReadyQueue(Process process) {
 		try {
 			this.fullSemaphoreReady.acquire();
 			if (process.getPC() == 0) 
@@ -83,7 +83,7 @@ public class Scheduler extends Thread {
 		}
 	}
 
-	public synchronized Process deReadyQueue() {
+	public Process deReadyQueue() {
 		Process process = null;
 		try {
 			this.emptySemaphoreReady.acquire();

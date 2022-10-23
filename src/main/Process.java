@@ -71,7 +71,7 @@ public class Process {
 			if(command.compareTo("codeSize") == 0) this.codeSize = size;
 			else if(command.compareTo("dataSize") == 0) { 
 				this.dataSize = size;
-				this.dataSegment = new String[this.dataSize];
+				this.dataSegment = new String[this.dataSize/4];
 			}
 			else if(command.compareTo("stackSize") == 0) this.stackSize = size;
 			else if(command.compareTo("heapSize") == 0) this.heapSize = size;
@@ -109,7 +109,7 @@ public class Process {
 			while (instruction != null) {
 				instruction = this.codeList.get(this.getPC());
 				translateInstruction(instruction);
-				System.out.println(instruction);
+				System.out.println("PC["+this.getPC()+"] "+instruction);
 				if(!checkInterrupt(instruction, interruptHandler)) return false;
 				Thread.sleep(700);
 			}
