@@ -37,7 +37,6 @@ public class MainFrame extends JFrame {
 		processCount.add(label);
 		count = new JLabel(String.valueOf(ui.getCount()));
 		processCount.add(count);
-		
 		this.add(btnPanel, BorderLayout.NORTH);
 		this.add(processCount, BorderLayout.SOUTH);
 	}

@@ -13,7 +13,7 @@ move @8, r0
 .label loop
 compare @4, @8
 jumpGraterThan loopEnd
-add @8, 2
+add @4, 2
 jump label
 .label loopEnd
 move @0, @8
