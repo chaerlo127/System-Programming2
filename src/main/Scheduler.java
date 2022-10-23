@@ -71,10 +71,9 @@ public class Scheduler extends Thread {
 	// critical section
 	// synchronized: 엄격하게 하나만 접근이 가능
 	// 세마포어: 조금 더 자유로운 시작/종료 가능
-	public void enReadyQueue(Process process) {
+	public synchronized void enReadyQueue(Process process) {
 		try {
 			this.fullSemaphoreReady.acquire();
-			// enqueue가 아니라, interrupt를 해서 생성한 후에 그 안에 enqueue를 한다
 			if (process.getPC() == 0) 
 				interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eProcessStarted, process));
 			this.readyQueue.enqueue(process);
@@ -84,7 +83,7 @@ public class Scheduler extends Thread {
 		}
 	}
 
-	public Process deReadyQueue() {
+	public synchronized Process deReadyQueue() {
 		Process process = null;
 		try {
 			this.emptySemaphoreReady.acquire();

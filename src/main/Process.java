@@ -32,6 +32,8 @@ public class Process {
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<String> codeList;
 	private int proNum;
+	private String[] dataSegment;
+	private String r;
 	//getters
 	public int getPC() {return PC;}
 	public int getCodeSize() {return codeSize;}
@@ -56,7 +58,10 @@ public class Process {
 			String operand = scanner.next();// codeSize
 			int size = Integer.parseInt(operand);
 			if(command.compareTo("codeSize") == 0) this.codeSize = size;
-			else if(command.compareTo("dataSize") == 0) this.dataSize = size;
+			else if(command.compareTo("dataSize") == 0) { 
+				this.dataSize = size;
+				this.dataSegment = new String[this.dataSize];
+			}
 			else if(command.compareTo("stackSize") == 0) this.stackSize = size;
 			else if(command.compareTo("heapSize") == 0) this.heapSize = size;
 			command = scanner.next();
@@ -92,6 +97,10 @@ public class Process {
 			String instruction = "";
 			while (instruction != null) {
 				instruction = this.codeList.get(this.getPC());
+				
+				translateInstruction(instruction);
+				
+				
 				if(!checkInterrupt(instruction, interruptHandler)) return false;
 				Thread.sleep(700);
 				System.out.println(instruction);		
@@ -110,11 +119,36 @@ public class Process {
 		return false;
 	}
 
+	private void translateInstruction(String instruction) {
+		String[] str = instruction.split(" ");
+		
+		if(str[0].equals("move")) {
+			str[1] = str[1].replace("@", "");
+			str[1] = str[1].replace(",", "");
+			if(str[2].indexOf("r")>=0) this.dataSegment[Integer.parseInt(str[1])/4] = r;
+			else this.dataSegment[Integer.parseInt(str[1])/4] = str[2];
+		}else if(str[0].equals("add")) {
+			//add @8, 1
+			str[1] = str[1].replace("@", "");
+			str[1] = str[1].replace(",", "");
+			this.dataSegment[Integer.parseInt(str[1])/4]
+					= String.valueOf(Integer.parseInt(dataSegment[Integer.parseInt(str[1])/4]) 
+							+ Integer.parseInt(str[2]));
+		}else if(str[0].equals("interrupt")) {
+			if(str[1].equals("read")) {
+				r = "5"	; // 실제로는 read를 해야하지만 interrupt가 발생하기 때문에 이를 5로 그냥 저장하고 return을 해준다.
+			}else if(str[0].equals("write")) {
+				// System.out.println으로 해주기
+			}
+		}
+		
+	}
 	// interrupt 를 확인한다.
 	private boolean checkInterrupt(String instruction, InterruptHandler interruptHandler) {
 		this.setPC(this.getPC() + 1);
 		if(instruction.indexOf("interrupt") >= 0) { // interrupt 라는 명령어가 있다면?
 			interruptHandler.set(interruptHandler.makeInterrupt(EInterrupt.eIOStarted, this));
+			System.out.println("------------------  [" +this.getProNum()+  "] IO Interrupt Start ------------------");
 			System.out.println("Interrupt Start");
 			return false;
 		}
@@ -137,6 +171,7 @@ public class Process {
 			} catch (Exception e) {
 			}
 			try {
+				System.out.println("------------------  [" +getProNum()+  "] Time Out Interrupt ------------------");
 				System.out.println("Time Out Interrupt");
 				currentThread.interrupt();
 				return;

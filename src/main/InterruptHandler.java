@@ -15,12 +15,10 @@ public class InterruptHandler {
     public class Interrupt{
         private EInterrupt eInterrupt;
         private Process process;
-        public EInterrupt geteInterrupt() {
-            return eInterrupt;
-        }
-        public Process getProcess() {
-            return process;
-        }
+        
+        public EInterrupt geteInterrupt() {return eInterrupt;}
+        public Process getProcess() {return process;}
+        
         public Interrupt(EInterrupt eInterrupt, Process process){
             this.eInterrupt = eInterrupt;
             this.process = process;
@@ -57,22 +55,21 @@ public class InterruptHandler {
     
     // IO device Interrupt Start
     private void HandleIOStart(Process process) {
-    	System.out.println("------------------  [" +process.getProNum()+  "] IO Interrupt Start ------------------");
     	this.scheduler.getWaitQueue().enqueue(process);
+    	System.out.println("------------------  [" +process.getProNum()+  "] IO Interrupt Finished ------------------");
     	this.set(this.makeInterrupt(EInterrupt.eIOTerminated, process));
     }
     
     // IO device Interrupt Terminate
     private void HandleIOTerminate() {
     	Process process = this.scheduler.getWaitQueue().dequeue();
-    	System.out.println("------------------  [" +process.getProNum()+  "] IO Interrupt Finished ------------------");
+    	
     	this.scheduler.enReadyQueue(process);
     }
     
     // Timeout Interrupt 
     private void HandleTimeOut(Process process) {
         // context switching
-    	System.out.println("------------------  [" +process.getProNum()+  "] Time Out Interrupt ------------------");
     	this.scheduler.enReadyQueue(process);
     }
     
