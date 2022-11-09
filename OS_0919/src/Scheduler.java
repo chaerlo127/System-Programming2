@@ -34,7 +34,7 @@ public class Scheduler extends Thread {
 			if(this.runningProcess == null) {
 				this.runningProcess = this.readyQueue.dequeue();
 			}else {
-				this.runningProcess.executeInstruction();
+				this.runningProcess.executeInstruction(interruptQueue);
 			}
 		}
 	}
