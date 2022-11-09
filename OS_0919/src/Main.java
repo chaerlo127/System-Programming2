@@ -1,5 +1,3 @@
-import java.util.Vector;
-
 public class Main {
 
 	
@@ -10,20 +8,16 @@ public class Main {
 	}
 	
 	public void run() {
-		// queue를 공유 자원으로 만들기
-		Queue<Process> readyQueue = new Queue<Process>();
-		Queue<Process> waitQueue = new Queue<Process>();
-		Queue<Interrupt> interruptQueue = new Queue<Interrupt>();
-		Queue<FileIOCommand> fileIOCommandQueue = new Queue<FileIOCommand>(); // 명령어, offset, file ID
-		Vector<Integer> filesystemBuffer = new Vector<Integer>();
+		Queue<Interrupt> interruptQueue = new QueueSynchronized<Interrupt>(); // scheduler의 interrupt Queue
+		Queue<Interrupt> fileIOCommandQueue = new QueueSynchronized<Interrupt>(); // fileSystem의 interrupt Queue
 
-		Scheduler scheduler = new Scheduler(readyQueue, waitQueue, interruptQueue, fileIOCommandQueue, filesystemBuffer);
+		Scheduler scheduler = new Scheduler(interruptQueue, fileIOCommandQueue);
 		scheduler.start();
 
-		UI ui = new UI(readyQueue);
+		UI ui = new UI(interruptQueue);
 		ui.start();
 
-		FileSystem fileSystem = new FileSystem(interruptQueue, filesystemBuffer); // buffer를 아직 연결하지 않았음.
+		FileSystem fileSystem = new FileSystem(interruptQueue); // buffer를 아직 연결하지 않았음.
 		fileSystem.start();
 	}
 	

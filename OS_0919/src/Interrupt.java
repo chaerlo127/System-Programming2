@@ -1,10 +1,10 @@
 public class Interrupt {
 	public enum EInterrupt {
 		eTimeOut,
-		eIOStarted,
-		eIOTerminated,
-		eProcessStarted,
+		eProcessStart,
 		eProcessTerminated,
+		eReadStart,
+		eReadTerminated,
 	}
 	private EInterrupt eInterrupt;
 	private Process process;

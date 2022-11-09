@@ -30,13 +30,11 @@ public class Process {
 //	.end
 	private int PC;
 	private int codeSize, dataSize, stackSize, heapSize;	
-	private Vector<Instruction> codeList;
+	private Vector<String> codeList;
 	private class Instruction{
 		private String command; // 글자수 세자리로 
 		private String operand1;
 		private String operand2;
-		
-		
 	}
 	
 	// getters
@@ -58,14 +56,18 @@ public class Process {
 	public int getHeapSize() {
 		return heapSize;
 	}
-	public Vector<Instruction> getCodeList() {
+	public Vector<String> getCodeList() {
 		return codeList;
 	}
 	
 	public Process() {
-		this.codeList = new Vector<Instruction>();
+		this.codeList = new Vector<String>();
 	}
-	
+	public void initialize() {
+		
+	}
+	public void finish() {
+	}
 	
 	private void parseData (Scanner scanner) {
 		String command = scanner.next();
@@ -86,7 +88,7 @@ public class Process {
 	}
 	private void parseCode(Scanner scanner) {
 		String line = scanner.nextLine();
-		while (line.compareTo(".end") != 0) {
+		while (scanner.hasNext()) {
 			this.codeList.add(line); // parsing 을 해야한다.
 			line = scanner.nextLine();
 		}		
@@ -105,14 +107,14 @@ public class Process {
 		}
 	}
 
-	// 명령어를 뜯어서 가져온다. 기말에는 명령어 실행까지 해야한다. 
-	// 타임 아웃이 걸리면, context switching을 interrupt를 실행하고 건다. 슬립을 걸어버린다. 
 	public boolean executeInstruction() {
 		String instruction = this.codeList.get(this.getPC());
+		System.out.println(instruction);
 		this.setPC(this.getPC()+1);
-		if (instruction.compareTo("halt") == 0) {
+		if (instruction.compareTo("halt") == 0) { // 변경 필요
 			return false;
 		}
 		return true;
 	}
+
 }

@@ -1,11 +1,13 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class UI extends Thread {
-	private Queue<Process> readyQueue;
+	private Queue<Interrupt> interruptQueue;
 	
 	public UI(Scheduler scheduler) {}
-	public UI(Queue<Process> readyQueue) {
-		this.readyQueue = readyQueue;
+	public UI(Queue<Interrupt> interruptQueue) {
+		this.interruptQueue = interruptQueue;
 	}
 	
 	public void run() {
@@ -20,11 +22,31 @@ public class UI extends Thread {
 		while (command.compareTo("q") != 0) {
 			if (command.compareTo("r") == 0) {
 				String fileName = scanner.next();
-				Process process = loader.load(fileName);				
-				readyQueue.enReadyQueue(process);
+				Process process = loader.load(fileName);
+				Interrupt interrupt = new Interrupt(Interrupt.EInterrupt.eProcessStart, process);
+				interruptQueue.enqueue(interrupt);
 			}
 			command = scanner.next();
 		}
 		scanner.close();
 	}
+	
+
+	private class Loader {
+		public Process load(String exeName) {
+			try {
+				File file = new File("data" + "/" + exeName);
+				Scanner scanner = new Scanner(file);
+				Process process = new Process();
+				process.parse(scanner);
+				scanner.close();
+				return process;
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
 }
