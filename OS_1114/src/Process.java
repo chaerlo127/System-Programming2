@@ -153,9 +153,11 @@ public class Process {
 			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), a+b);
 		}else if (instruction.getCommand().compareTo("subtract") == 0) {
 			int a = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int b = this.registers.get(Integer.parseInt(instruction.getOperand2()));
+			int b = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
 			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), a-b);
 		}
+		// °ö¼À, ³ª´°¼ÀÇÊ¿ä
+		// moveµµ ÇÊ¿äÇÒ °Í °°À½. 
 	}
 	
 	private class Instruction {
