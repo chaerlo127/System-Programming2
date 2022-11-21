@@ -151,7 +151,7 @@ public class Process {
 			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
 		}else if (instruction.getCommand().compareTo("move") == 0) {
 			int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.registers.set(Integer.parseInt(instruction.getOperand2().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
+			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
 		}else if (instruction.getCommand().compareTo("add") == 0) {
 			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
 			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
@@ -165,7 +165,7 @@ public class Process {
 			if(value1 > value2) this.bGratherThan = true;
 		}else if (instruction.getCommand().compareTo("addc") == 0) {
 			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2()));
+			int value2 = Integer.parseInt(instruction.getOperand2());
 			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
 		}
 		
