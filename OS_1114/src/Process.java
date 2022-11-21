@@ -9,17 +9,22 @@ public class Process {
 	private int PC;
 	private int codeSize, dataSize, stackSize, heapSize;
 	private Vector<Integer> registers;
+	private boolean bGratherThan;
+	private boolean bEqual;
 	
 	// Memory
 	private Vector<Instruction> codeList;
 	private Vector<Integer> dataSegment;
-	private Vector<Integer> stackSegment;
+	private Vector<Integer> stackSegment; // push 명령어를 위해 사용
 	private Vector<Integer> heapSegment;
 	
 	// Parser
 	private Map<String, String> labelMap;
 	 
 	public Process() {
+		this.bEqual = false;
+		this.bGratherThan = false;
+		
 		this.registers = new Vector<Integer>();
 		for (int i=0; i<MAX_REGISTERS; i++) {
 			this.registers.add(i);
@@ -118,6 +123,8 @@ public class Process {
 		}
 	}
 
+	
+	// enum class 만들기 필요합니뒈!
 	public void executeInstruction(Queue<Interrupt> interruptQueue) {
 		Instruction instruction = this.codeList.get(this.PC);
 		System.out.println(this.PC + ": " + 
@@ -129,32 +136,53 @@ public class Process {
 			Interrupt interrupt =
 					new Interrupt(Interrupt.EInterrupt.eProcessTerminated, this);
 			interruptQueue.enqueue(interrupt);
-		}else if (instruction.getCommand().compareTo("movec") == 0) {
-			int value = Integer.parseInt(instruction.getOperand2());
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
-		}else if (instruction.getCommand().compareTo("load") == 0) { // memory 주소 -> register
+		}
+		// alu 관련 명령어 + 곱하기 나누기도 만들기!!!
+		else if (instruction.getCommand().compareTo("load") == 0) { // memory 주소 -> register
 			int value = this.dataSegment.get(Integer.parseInt(instruction.getOperand2())); // 메모리에 저장된 value의 값을 불러오기 위해 메모리 주소를 불러온다. 
 			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
-			
 		} else if (instruction.getCommand().compareTo("store") == 0) {
 			// store를 해서 register를 segment에 저장해라. 
 			// register 0번지에 저장된 값을 data segment에 저장한다.
 			int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.dataSegment.set(Integer.parseInt(instruction.operand1), value);
-		}else if (instruction.getCommand().compareTo("push") == 0) {
-			// interrupt
+			this.dataSegment.set(Integer.parseInt(instruction.getOperand1()), value);
+		}else if (instruction.getCommand().compareTo("movec") == 0) {
+			int value = Integer.parseInt(instruction.getOperand2());
+			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
+		}else if (instruction.getCommand().compareTo("move") == 0) {
+			int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+			this.registers.set(Integer.parseInt(instruction.getOperand2().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
 		}else if (instruction.getCommand().compareTo("add") == 0) {
-			int a = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int b = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), a+b);
-		}else if (instruction.getCommand().compareTo("addc") == 0) {
-			int a = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int b = this.registers.get(Integer.parseInt(instruction.getOperand2()));
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), a+b);
+			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
+			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
 		}else if (instruction.getCommand().compareTo("subtract") == 0) {
-			int a = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int b = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), a-b);
+			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
+			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 - value2);
+			
+			if(value1 == value2) this.bEqual = true;
+			if(value1 > value2) this.bGratherThan = true;
+		}else if (instruction.getCommand().compareTo("addc") == 0) {
+			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
+			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2()));
+			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
+		}
+		
+		// cu 관련 명령어 -> greaterThanEqual, jump 필요
+		else if (instruction.getCommand().compareTo("jump") == 0) {
+			this.PC = Integer.parseInt(instruction.getOperand1());// map 내 몇 번째 라인인지 확인
+		}else if (instruction.getCommand().compareTo("greaterThanEqual") == 0) {
+			// interrupt
+			if(this.bEqual || this.bGratherThan) {
+				this.PC = Integer.parseInt(instruction.getOperand1());
+			}
+		}else if (instruction.getCommand().compareTo("push") == 0) {
+		}
+		
+		// interrupt 명령어
+		else if (instruction.getCommand().compareTo("interrupt") == 0) {
+			
 		}
 		// 곱셈, 나눗셈필요
 		// move도 필요할 것 같음. 
