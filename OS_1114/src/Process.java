@@ -132,13 +132,9 @@ public class Process {
 				+instruction.getOperand1()+ " " 
 				+instruction.getOperand2());
 		this.PC = PC +1;
-		if (instruction.getOperand1().compareTo("halt") == 0) {
-			Interrupt interrupt =
-					new Interrupt(Interrupt.EInterrupt.eProcessTerminated, this);
-			interruptQueue.enqueue(interrupt);
-		}
+		
 		// alu 관련 명령어 + 곱하기 나누기도 만들기!!!
-		else if (instruction.getCommand().compareTo("load") == 0) { // memory 주소 -> register
+		if (instruction.getCommand().compareTo("load") == 0) { // memory 주소 -> register
 			int value = this.dataSegment.get(Integer.parseInt(instruction.getOperand2())); // 메모리에 저장된 value의 값을 불러오기 위해 메모리 주소를 불러온다. 
 			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
 		} else if (instruction.getCommand().compareTo("store") == 0) {
@@ -177,12 +173,22 @@ public class Process {
 			if(this.bEqual || this.bGratherThan) {
 				this.PC = Integer.parseInt(instruction.getOperand1());
 			}
-		}else if (instruction.getCommand().compareTo("push") == 0) {
 		}
-		
 		// interrupt 명령어
 		else if (instruction.getCommand().compareTo("interrupt") == 0) {
-			
+			Interrupt.EInterrupt eInterrupt = null;
+			if(instruction.operand1.compareTo("readInt") ==0) {
+				eInterrupt = Interrupt.EInterrupt.eReadStart;
+			} else if (instruction.operand1.compareTo("writeInt") == 0) {
+				eInterrupt = Interrupt.EInterrupt.eWriteStart;
+			} else if(instruction.operand1.compareTo("halt") ==0) {
+				eInterrupt = Interrupt.EInterrupt.eProcessTerminated;
+			}
+			Interrupt interrupt = new Interrupt(eInterrupt, this);
+			interruptQueue.enqueue(interrupt);
+		}
+		
+		else if (instruction.getCommand().compareTo("push") == 0) {
 		}
 		// 곱셈, 나눗셈필요
 		// move도 필요할 것 같음. 

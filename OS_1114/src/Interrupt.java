@@ -3,9 +3,11 @@ public class Interrupt {
 	public enum EInterrupt {
 		eTimeOut,
 		eProcessStart,
-		eProcessTerminated,
+		eProcessTerminated, // halt
 		eReadStart,
-		eReadTerminated,
+		eReadTerminated, 
+		eWriteStart, 
+		eWriteTerminated,
 	}
 		
 	private EInterrupt eInterrupt;

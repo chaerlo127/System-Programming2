@@ -48,6 +48,9 @@ public class Scheduler extends Thread {
 		public InterruptHandler() {
 		}
 		
+		
+		// IHR (Interrupt Handling Routine)
+		// Handling 함수는 거의 표준화 되어 있음. 
 		private void HandleTimeOut(Process process) {
 //			getReadyQueue().enqueue(runningProcess);
 //			runningProcess = getReadyQueue().dequeue();
@@ -61,11 +64,27 @@ public class Scheduler extends Thread {
 			runningProcess = null;
 		}
 		private void HandleReadStart(Process process) {
-//			getWaitQueue().enqueue(runningProcess);
-//			runningProcess = getReadyQueue().dequeue();
+			// io start
+			
+			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
+			runningProcess = readyQueue.dequeue();
 		}
 		private void HandleReadTerminated(Process process) {
-//			getReadyQueue().enqueue(process);
+			
+			waitQueue.dequeue(runningProcess); // 특정 프로세스를 뽑는 함수가 필요하다. --> 기말고사 점수가 포함 된다. read start가 되려면 파라미터를 뽑아야한다. 프로세스를 파일 시스템에게 일을 시켜야 한다. waitqueue에 저장하기 전에 일을 시키고 넣어줘야 한다.
+			readyQueue.enqueue(process);
+		}
+
+		private void HandleWriteStart(Process process) {
+			// io start
+			
+			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
+			runningProcess = readyQueue.dequeue();			
+		}
+
+		private void HandleWriteTerminated(Process process) {
+			waitQueue.dequeue(runningProcess);
+			readyQueue.enqueue(process);			
 		}
 
 		public void handle() {
@@ -87,11 +106,16 @@ public class Scheduler extends Thread {
 				case eReadTerminated:
 					HandleReadTerminated(interrupt.getProcess());
 					break;
+				case eWriteStart:
+					HandleWriteStart(interrupt.getProcess());
+					break;
+				case eWriteTerminated:
+					HandleWriteTerminated(interrupt.getProcess());
+					break;
 				default:
 					break;
 				}
 			}
 		}
 	}
-
 }
