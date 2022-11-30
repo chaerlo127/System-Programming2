@@ -16,6 +16,7 @@ public class Process {
 	private Vector<Instruction> codeList;
 	private Vector<Integer> dataSegment;
 	private Vector<Integer> stackSegment; // push 명령어를 위해 사용
+	private int top; // 데이터가 비어있는 위치
 	private Vector<Integer> heapSegment;
 	
 	// Parser
@@ -33,6 +34,7 @@ public class Process {
 		this.codeList = new Vector<Instruction>();
 		this.dataSegment = new Vector<Integer>();
 		this.stackSegment = new Vector<Integer>();
+		this.top = 0;
 		this.heapSegment = new Vector<Integer>();
 		
 		this.labelMap = new HashMap<String, String>();
@@ -42,7 +44,15 @@ public class Process {
 	public void finish() {
 	}
 	
-	
+	public void push(int value) {
+		this.stackSegment.set(top, value);
+		top ++; 
+	}
+	public int pop() {
+		int value = this.stackSegment.get(top-1);
+		top = top - 1;
+		return value;
+	}
 	private void parseData (Scanner scanner) {
 		String command = scanner.next();
 		while (command.compareTo(".end") != 0) {
@@ -188,7 +198,11 @@ public class Process {
 			interruptQueue.enqueue(interrupt);
 		}
 		
+		// io Interrupt 명령어
 		else if (instruction.getCommand().compareTo("push") == 0) {
+			push(Integer.parseInt(instruction.getOperand1())); // push 2라면 2를 push 한다. 단위는 int, process stack push 하면 file system이 copy해서 쓸 것이다.  
+		}else if (instruction.getCommand().compareTo("pop") == 0) {
+			
 		}
 		// 곱셈, 나눗셈필요
 		// move도 필요할 것 같음. 
