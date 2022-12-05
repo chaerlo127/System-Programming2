@@ -8,16 +8,19 @@ public class Scheduler extends Thread {
 	
 	// associations
 	private Queue<Interrupt> interruptQueue;
-	private Queue<Interrupt> fileIOCommandQueue;
+	private Queue<Interrupt> fileIOInterruptQueue;
 	
 	// working variables
 	private boolean bPowerOn;
 	private Process runningProcess;
 
 	/////////////////////////////////////////////////
+	public void initialize() {
+	}
+	public void finish() {
+	}
 	public Scheduler( 
-			Queue<Interrupt> interruptQueue, 
-			Queue<Interrupt> fileIOCommandQueue) {
+			Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
 		// components
 		this.interruptHandler = new InterruptHandler();			
 		this.readyQueue = new Queue<Process>();
@@ -25,8 +28,7 @@ public class Scheduler extends Thread {
 		
 		// associations
 		this.interruptQueue = interruptQueue;
-		this.fileIOCommandQueue = fileIOCommandQueue;
-		
+		this.fileIOInterruptQueue = fileIOInterruptQueue;
 		// working objects
 		this.runningProcess = null;			
 		this.bPowerOn = true;
@@ -70,9 +72,7 @@ public class Scheduler extends Thread {
 			// 전달한 disk 위치로 가서 몇 바이트를 읽으라고 명령을 내려라 한다. 
 			
 			// read의 과정
-			fileSystem.read(runningProcess); // process 주소
-			
-			
+//			fileSystem.read(runningProcess); // process 주소
 			runningProcess = readyQueue.dequeue();
 		}
 		private void HandleReadTerminated(Process process) { // file system의 일이 끝났음.

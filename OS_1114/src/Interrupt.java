@@ -8,6 +8,8 @@ public class Interrupt {
 		eReadTerminated, 
 		eWriteStart, 
 		eWriteTerminated,
+		eOpenStart,
+		eOpenTermianted
 	}
 		
 	private EInterrupt eInterrupt;

@@ -8,7 +8,10 @@ public class UI extends Thread {
 	public UI(Queue<Interrupt> interruptQueue) {
 		this.interruptQueue = interruptQueue;
 	}
-
+	public void initialize() {
+	}
+	public void finish() {
+	}
 	public void run() {
 		Loader loader = new Loader();
 		

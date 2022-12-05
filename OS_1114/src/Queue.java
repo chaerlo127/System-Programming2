@@ -6,7 +6,10 @@ public class Queue<T> extends Vector<T>{
 	private final int MAX_NUM_ELEMENT = 10;
 
 	private int head, tail, currentSize, maxSize;
-
+	public void initialize() {
+	}
+	public void finish() {
+	}
 	public Queue() {
 		this.maxSize = MAX_NUM_ELEMENT;
 		this.currentSize = 0;
