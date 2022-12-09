@@ -1,6 +1,7 @@
 public class Main {
 	private Queue<Interrupt> interruptQueue; // UI ~ Scheduler ~ File System 에서 사용
 	private Queue<Interrupt> fileIOInterruptQueue; // Scheduler에서 File System으로 interrupt 전달할 때만 사용
+	private MainFrame mainFrame;
 	private Scheduler scheduler;
 	private UI ui;
 	private FileSystem fileSystem;
@@ -9,6 +10,7 @@ public class Main {
 		this.interruptQueue = new QueueSynchronized<Interrupt>();
 		this.fileIOInterruptQueue = new QueueSynchronized<Interrupt>();
 		this.ui = new UI(interruptQueue);		
+		this.mainFrame = new MainFrame(ui);
 		this.scheduler = new Scheduler(interruptQueue, fileIOInterruptQueue);
 		this.fileSystem = new FileSystem(interruptQueue, fileIOInterruptQueue);	
 	}
@@ -32,6 +34,7 @@ public class Main {
 	private void run() {
 		scheduler.start();
 		ui.start();
+		mainFrame.setVisible(true);
 		fileSystem.start();
 	}
 	
