@@ -33,14 +33,21 @@ public class Scheduler extends Thread {
 		this.runningProcess = null;			
 		this.bPowerOn = true;
 	}
-
+	
+	Thread currentThread;
+	TimerInterrupt killInterrupt;
 	public void run() {
 		while (this.bPowerOn) {
 			this.interruptHandler.handle();
 			if (this.runningProcess == null) {
 				this.runningProcess = this.readyQueue.dequeue();
+				if(this.runningProcess != null) {
+					this.currentThread =  Thread.currentThread();
+					killInterrupt = new TimerInterrupt(currentThread);
+					killInterrupt.start();
+				}
 			} else {
-				if(!this.runningProcess.executeInstruction(interruptQueue, fileIOInterruptQueue)) { // interrupt 발생하거나 halt가 발생하게 되면
+				if(!this.runningProcess.executeInstruction(interruptQueue, fileIOInterruptQueue, killInterrupt)) { // interrupt 발생하거나 halt가 발생하게 되면
 					this.runningProcess = null;
 				}
 			}
@@ -55,8 +62,8 @@ public class Scheduler extends Thread {
 		// Handling 함수는 거의 표준화 되어 있음.
 		// process의 포인터를 잡아준다 파라미터가 있으면 process에서 인터럭트를 걸기전에 이미 push 해줬음. 
 		private void HandleTimeOut(Process process) {
-//			getReadyQueue().enqueue(runningProcess);
-//			runningProcess = getReadyQueue().dequeue();
+			System.out.println("------------------  [" + process.getProNum() + "] Time Out Interrupt ------------------");
+			readyQueue.enqueue(process);
 		}
 		private void HandleProcessStart(Process process) {
 			process.initialize();
@@ -81,12 +88,12 @@ public class Scheduler extends Thread {
 			// 프로세스를 파일 시스템에게 일을 시켜야 한다. waitqueue에 저장하기 전에 일을 시키고 넣어줘야 한다.
 			readyQueue.enqueue(process);
 		}
-		private void HandleWriteStart(Process process) {
-			// io start
-			
-			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
-			runningProcess = readyQueue.dequeue();			
-		}
+//		private void HandleWriteStart(Process process) {
+//			// io start
+//			
+//			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
+//			runningProcess = readyQueue.dequeue();			
+//		}
 		private void HandleWriteTerminated(Process process) {
 			waitQueue.remove(runningProcess);
 			readyQueue.enqueue(process);			

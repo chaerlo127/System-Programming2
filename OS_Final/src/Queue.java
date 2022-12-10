@@ -32,16 +32,18 @@ public class Queue<T> extends Vector<T>{
 	}
 	
 	public void enqueue(T element) {
-		if (this.currentSize < this.maxSize) { 
+		if (this.currentSize < this.maxSize) {
 			this.set(this.tail, element);
 			this.tail = (this.tail + 1) % this.maxSize;
 			this.currentSize++;
 		}
 	}
+
 	public T dequeue() {
 		T element = null;
 		if (this.currentSize > 0) {
 			element = this.get(this.head);
+			this.set(this.head, null);
 			this.head = (this.head + 1) % this.maxSize;
 			this.currentSize--;
 		}

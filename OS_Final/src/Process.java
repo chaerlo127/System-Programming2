@@ -71,6 +71,9 @@ public class Process {
 	public void setProNum(int proNum) {
 		this.proNum = proNum;
 	}
+	public int getProNum() {
+		return this.proNum;
+	}
 	public int getWriteData() {
 		return this.writeData;
 	}
@@ -156,90 +159,95 @@ public class Process {
 		}
 	}
 
-	
 	// enum class 만들기 필요합니뒈!
-	public boolean executeInstruction(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
-		System.out.print("Process: " + this.proNum + " [" + this.processName + "] \t");
-		Instruction instruction = this.codeList.get(this.PC);
-		System.out.println(" PC -> " + this.PC + ": " + 
-				instruction.getCommand() + " "
-				+instruction.getOperand1()+ " " 
-				+instruction.getOperand2());
-		this.PC = PC +1;
+	public boolean executeInstruction(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue, TimerInterrupt killInterrupt) {
+		try {
+			Instruction instruction = this.codeList.get(this.PC);
+			System.out.println("Process: " + this.proNum + " [" + this.processName + "] \t" + 
+			" PC -> " + this.PC + ": " + 
+					instruction.getCommand() + " "
+					+instruction.getOperand1()+ " " 
+					+instruction.getOperand2());
+			this.PC = PC +1;
 		
-		// alu 관련 명령어 + 곱하기 나누기도 만들기!!!
-		if (instruction.getCommand().compareTo("load") == 0) { // memory 주소 -> register
-			int value = this.dataSegment.get(Integer.parseInt(instruction.getOperand2())); // 메모리에 저장된 value의 값을 불러오기 위해 메모리 주소를 불러온다. 
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
-		} else if (instruction.getCommand().compareTo("store") == 0) {
-			// store를 해서 register를 segment에 저장해라. 
-			// register 0번지에 저장된 값을 data segment에 저장한다.
-			int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.dataSegment.set(Integer.parseInt(instruction.getOperand1()), value);
-		}else if (instruction.getCommand().compareTo("movec") == 0) {
-			int value = Integer.parseInt(instruction.getOperand2());
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
-		}else if (instruction.getCommand().compareTo("move") == 0) {
-			int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
-		}else if (instruction.getCommand().compareTo("add") == 0) {
-			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
-		}else if (instruction.getCommand().compareTo("subtract") == 0) {
-			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 - value2);
-			
-			if(value1 == value2) this.bEqual = true;
-			if(value1 > value2) this.bGratherThan = true;
-		}else if (instruction.getCommand().compareTo("addc") == 0) {
-			int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
-			int value2 = Integer.parseInt(instruction.getOperand2());
-			this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
-		}
-		
-		// cu 관련 명령어 -> greaterThanEqual, jump 필요
-		else if (instruction.getCommand().compareTo("jump") == 0) {
-			this.PC = Integer.parseInt(instruction.getOperand1());// map 내 몇 번째 라인인지 확인
-		}else if (instruction.getCommand().compareTo("greaterThanEqual") == 0) {
-			// interrupt
-			if(this.bEqual || this.bGratherThan) {
-				this.PC = Integer.parseInt(instruction.getOperand1());
+			// alu 관련 명령어 + 곱하기 나누기도 만들기!!!
+			if (instruction.getCommand().compareTo("load") == 0) { // memory 주소 -> register
+				int value = this.dataSegment.get(Integer.parseInt(instruction.getOperand2())); // 메모리에 저장된 value의 값을 불러오기 위해 메모리 주소를 불러온다. 
+				this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
+			} else if (instruction.getCommand().compareTo("store") == 0) {
+				// store를 해서 register를 segment에 저장해라. 
+				// register 0번지에 저장된 값을 data segment에 저장한다.
+				int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+				this.dataSegment.set(Integer.parseInt(instruction.getOperand1()), value);
+			}else if (instruction.getCommand().compareTo("movec") == 0) {
+				int value = Integer.parseInt(instruction.getOperand2());
+				this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
+			}else if (instruction.getCommand().compareTo("move") == 0) {
+				int value = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+				this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value);// 번지를 받아서 register에 value를 저장한다.
+			}else if (instruction.getCommand().compareTo("add") == 0) {
+				int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
+				int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+				this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
+			}else if (instruction.getCommand().compareTo("subtract") == 0) {
+				int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
+				int value2 = this.registers.get(Integer.parseInt(instruction.getOperand2().substring(1)));
+				this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 - value2);
+				
+				if(value1 == value2) this.bEqual = true;
+				if(value1 > value2) this.bGratherThan = true;
+			}else if (instruction.getCommand().compareTo("addc") == 0) {
+				int value1 = this.registers.get(Integer.parseInt(instruction.getOperand1().substring(1)));
+				int value2 = Integer.parseInt(instruction.getOperand2());
+				this.registers.set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
 			}
-		}
-		// interrupt 명령어
-		else if (instruction.getCommand().compareTo("interrupt") == 0) {
-			Interrupt.EInterrupt eInterrupt = null;
-			if(instruction.operand1.compareTo("readInt") ==0) {
-				eInterrupt = Interrupt.EInterrupt.eOpenStart;
-				this.emode = EMODE.eRead;
-			} else if (instruction.operand1.compareTo("writeInt") == 0) {
-				this.writeData = this.dataSegment.get(this.fileID);
-				eInterrupt = Interrupt.EInterrupt.eOpenStart;
-				this.emode = EMODE.eWrite;
-			} else if(instruction.operand1.compareTo("halt") ==0) {
-				eInterrupt = Interrupt.EInterrupt.eProcessTerminated;
+			
+			// cu 관련 명령어 -> greaterThanEqual, jump 필요
+			else if (instruction.getCommand().compareTo("jump") == 0) {
+				this.PC = Integer.parseInt(instruction.getOperand1());// map 내 몇 번째 라인인지 확인
+			}else if (instruction.getCommand().compareTo("greaterThanEqual") == 0) {
+				// interrupt
+				if(this.bEqual || this.bGratherThan) {
+					this.PC = Integer.parseInt(instruction.getOperand1());
+				}
+			}
+			// interrupt 명령어
+			else if (instruction.getCommand().compareTo("interrupt") == 0) {
+				Interrupt.EInterrupt eInterrupt = null;
+				if(instruction.operand1.compareTo("readInt") ==0) {
+					eInterrupt = Interrupt.EInterrupt.eOpenStart;
+					this.emode = EMODE.eRead;
+				} else if (instruction.operand1.compareTo("writeInt") == 0) {
+					this.writeData = this.dataSegment.get(this.fileID);
+					eInterrupt = Interrupt.EInterrupt.eOpenStart;
+					this.emode = EMODE.eWrite;
+				} else if(instruction.operand1.compareTo("halt") ==0) {
+					eInterrupt = Interrupt.EInterrupt.eProcessTerminated;
+					Interrupt interrupt = new Interrupt(eInterrupt, this);
+					interruptQueue.enqueue(interrupt);
+					return false;
+				}
 				Interrupt interrupt = new Interrupt(eInterrupt, this);
-				interruptQueue.enqueue(interrupt);
+				fileIOInterruptQueue.enqueue(interrupt);
 				return false;
 			}
-			Interrupt interrupt = new Interrupt(eInterrupt, this);
-			fileIOInterruptQueue.enqueue(interrupt);
-			return false;
-		}
-		
-		// io Interrupt 명령어
-		else if (instruction.getCommand().compareTo("push") == 0) {
-			this.fileID = Integer.parseInt(instruction.getOperand1());
-			// push 2라면 2를 push 한다. 단위는 int, process stack push 하면 file system이 copy해서 쓸 것이다.  
-		}else if (instruction.getCommand().compareTo("pop") == 0) {
 			
-		}
-		
-		return true;
-		// 곱셈, 나눗셈필요
-		// move도 필요할 것 같음. 
+			// io Interrupt 명령어
+			else if (instruction.getCommand().compareTo("push") == 0) {
+				this.fileID = Integer.parseInt(instruction.getOperand1());
+				// push 2라면 2를 push 한다. 단위는 int, process stack push 하면 file system이 copy해서 쓸 것이다.  
+			}else if (instruction.getCommand().compareTo("pop") == 0) {
+			}
+			
+			Thread.sleep(700);
+			return true;
+			// 곱셈, 나눗셈필요
+			// move도 필요할 것 같음. 
+		}catch (Exception e) {
+			interruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eTimeOut, this)); // Timeout Interrupt 발생 시
+		} 
+		return false;
+	
 	}
 	
 	private class Instruction {
