@@ -67,32 +67,20 @@ public class UI extends Thread {
 			if (!files.isEmpty()) {
 				Process process = loader.load(files.remove(0));
 				if (process != null) {
+					process.setProNum(processNum);
 					Interrupt interrupt = new Interrupt(Interrupt.EInterrupt.eProcessStart, process);
 					this.interruptQueue.enqueue(interrupt);
 				}
 			}
 		}
 	}
-//		Scanner scanner = new Scanner(System.in);
-//		String command = scanner.next();
-//		while (command.compareTo("q") != 0) {
-//			if (command.compareTo("r") == 0) {
-//				String fileName = scanner.next();
-//				Process process = loader.load(fileName);
-//				Interrupt interrupt = new Interrupt(
-//						Interrupt.EInterrupt.eProcessStart, process);
-//				this.interruptQueue.enqueue(interrupt);
-//			}
-//			command = scanner.next();
-//		}
-//		scanner.close();
 	private class Loader {
 		public Process load(File file) {
 			Process process = null;
 			try {
 				if (file != null) {
 					Scanner scanner = new Scanner(file);
-					process = new Process();
+					process = new Process(file.getName());
 					process.parse(scanner);
 					scanner.close();
 				}

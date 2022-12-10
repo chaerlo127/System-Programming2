@@ -3,6 +3,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
 
+import constraint.EMODE;
+
 public class Process {
 	// CPU
 	private static final int MAX_REGISTERS = 10;
@@ -11,18 +13,25 @@ public class Process {
 	private Vector<Integer> registers;
 	private boolean bGratherThan;
 	private boolean bEqual;
+	private EMODE emode;
+	private int fileID;
+	private int writeData;
 	
 	// Memory
 	private Vector<Instruction> codeList;
 	private Vector<Integer> dataSegment;
 	private Vector<Integer> stackSegment; // push 명령어를 위해 사용
-	private int top; // 데이터가 비어있는 위치
 	private Vector<Integer> heapSegment;
+	private int top; // 데이터가 비어있는 위치
+	private String processName;
+	private int proNum;
 	
 	// Parser
 	private Map<String, String> labelMap;
 	 
-	public Process() {
+	public Process(String processName) {
+		this.processName = processName;
+		
 		this.bEqual = false;
 		this.bGratherThan = false;
 		
@@ -44,14 +53,29 @@ public class Process {
 	public void finish() {
 	}
 	
-	public void push(int value) {
-		this.stackSegment.set(top, value);
-		top ++; 
+//	public void push(int value) {
+//		this.stackSegment.set(top, value);
+//		top ++; 
+//	}
+//	public int pop() {
+//		int value = this.stackSegment.get(top-1);
+//		top = top - 1;
+//		return value;
+//	}
+	public EMODE mode() {
+		return this.emode;
 	}
-	public int pop() {
-		int value = this.stackSegment.get(top-1);
-		top = top - 1;
-		return value;
+	public int getFileID() {
+		return this.fileID;
+	}
+	public void setProNum(int proNum) {
+		this.proNum = proNum;
+	}
+	public int getWriteData() {
+		return this.writeData;
+	}
+	public void inputFileData(int readData) {
+		this.dataSegment.set(this.fileID, readData);
 	}
 	private void parseData (Scanner scanner) {
 		String command = scanner.next();
@@ -79,7 +103,6 @@ public class Process {
 			command = scanner.next();
 		}		
 	}
-	
 	// symbol table과 비슷하게 생성한다.
 	// 'token: 문법 기본 구성 요소' 를 뜯어낸다.
 	// readInt는 interrupt [DMA, CPU와 독립적으로 돌아간다.]
@@ -135,9 +158,10 @@ public class Process {
 
 	
 	// enum class 만들기 필요합니뒈!
-	public void executeInstruction(Queue<Interrupt> interruptQueue) {
+	public boolean executeInstruction(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
+		System.out.print("Process: " + this.proNum + " [" + this.processName + "] \t");
 		Instruction instruction = this.codeList.get(this.PC);
-		System.out.println(this.PC + ": " + 
+		System.out.println(" PC -> " + this.PC + ": " + 
 				instruction.getCommand() + " "
 				+instruction.getOperand1()+ " " 
 				+instruction.getOperand2());
@@ -188,22 +212,32 @@ public class Process {
 		else if (instruction.getCommand().compareTo("interrupt") == 0) {
 			Interrupt.EInterrupt eInterrupt = null;
 			if(instruction.operand1.compareTo("readInt") ==0) {
-				eInterrupt = Interrupt.EInterrupt.eReadStart;
+				eInterrupt = Interrupt.EInterrupt.eOpenStart;
+				this.emode = EMODE.eRead;
 			} else if (instruction.operand1.compareTo("writeInt") == 0) {
-				eInterrupt = Interrupt.EInterrupt.eWriteStart;
+				this.writeData = this.dataSegment.get(this.fileID);
+				eInterrupt = Interrupt.EInterrupt.eOpenStart;
+				this.emode = EMODE.eWrite;
 			} else if(instruction.operand1.compareTo("halt") ==0) {
 				eInterrupt = Interrupt.EInterrupt.eProcessTerminated;
+				Interrupt interrupt = new Interrupt(eInterrupt, this);
+				interruptQueue.enqueue(interrupt);
+				return false;
 			}
 			Interrupt interrupt = new Interrupt(eInterrupt, this);
-			interruptQueue.enqueue(interrupt);
+			fileIOInterruptQueue.enqueue(interrupt);
+			return false;
 		}
 		
 		// io Interrupt 명령어
 		else if (instruction.getCommand().compareTo("push") == 0) {
-			push(Integer.parseInt(instruction.getOperand1())); // push 2라면 2를 push 한다. 단위는 int, process stack push 하면 file system이 copy해서 쓸 것이다.  
+			this.fileID = Integer.parseInt(instruction.getOperand1());
+			// push 2라면 2를 push 한다. 단위는 int, process stack push 하면 file system이 copy해서 쓸 것이다.  
 		}else if (instruction.getCommand().compareTo("pop") == 0) {
 			
 		}
+		
+		return true;
 		// 곱셈, 나눗셈필요
 		// move도 필요할 것 같음. 
 	}
@@ -240,4 +274,6 @@ public class Process {
 			}
 		}
 	}
+
+
 }

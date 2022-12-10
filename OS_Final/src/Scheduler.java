@@ -40,7 +40,9 @@ public class Scheduler extends Thread {
 			if (this.runningProcess == null) {
 				this.runningProcess = this.readyQueue.dequeue();
 			} else {
-				this.runningProcess.executeInstruction(interruptQueue);
+				if(!this.runningProcess.executeInstruction(interruptQueue, fileIOInterruptQueue)) { // interrupt 발생하거나 halt가 발생하게 되면
+					this.runningProcess = null;
+				}
 			}
 		}
 	}
@@ -49,8 +51,6 @@ public class Scheduler extends Thread {
 
 		public InterruptHandler() {
 		}
-		
-		
 		// IHR (Interrupt Handling Routine)
 		// Handling 함수는 거의 표준화 되어 있음.
 		// process의 포인터를 잡아준다 파라미터가 있으면 process에서 인터럭트를 걸기전에 이미 push 해줬음. 
@@ -66,7 +66,7 @@ public class Scheduler extends Thread {
 			process.finish();
 			runningProcess = null;
 		}
-		private void HandleReadStart(Process process) {
+		private void HandleOpenStart(Process process) {
 			// io start
 			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
 			// 전달한 disk 위치로 가서 몇 바이트를 읽으라고 명령을 내려라 한다. 
@@ -105,14 +105,11 @@ public class Scheduler extends Thread {
 				case eProcessTerminated:
 					HandleProcessTerminated(interrupt.getProcess());
 					break;
-				case eReadStart:
-					HandleReadStart(interrupt.getProcess());
+				case eOpenStart:
+					HandleOpenStart(interrupt.getProcess());
 					break;
 				case eReadTerminated:
 					HandleReadTerminated(interrupt.getProcess());
-					break;
-				case eWriteStart:
-					HandleWriteStart(interrupt.getProcess());
 					break;
 				case eWriteTerminated:
 					HandleWriteTerminated(interrupt.getProcess());

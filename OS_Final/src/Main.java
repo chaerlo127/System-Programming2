@@ -32,9 +32,9 @@ public class Main {
 	}
 
 	private void run() {
+		mainFrame.setVisible(true);
 		scheduler.start();
 		ui.start();
-		mainFrame.setVisible(true);
 		fileSystem.start();
 	}
 	

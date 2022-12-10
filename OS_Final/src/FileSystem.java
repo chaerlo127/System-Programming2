@@ -1,17 +1,21 @@
 import java.util.Vector;
 
+import constraint.EMODE;
+
 public class FileSystem extends Thread {
-	public enum EMODE{
-		// read open 할 것인지 -> 파일을 초기화 하지 않고 기존의 것으로 할 것임.
-		eRead,
-		// write open 할 것인지 -> 파일을 초기하면서 open
-		eWrite,
-		eClosed
-	}
+
 	private class FileControlBlock{
 		private EMODE emode;
 		private Process process;
 		private int currentPosition; // 현재 어디까지 읽었는지 저장
+		public FileControlBlock() {
+			
+		}
+		public FileControlBlock(EMODE mode, Process process, int currentPosition) {
+			this.emode = mode;
+			this.process = process;
+			this.currentPosition = currentPosition;
+		}
 		public EMODE getEmode() {
 			return emode;
 		}
@@ -50,10 +54,19 @@ public class FileSystem extends Thread {
 	}
 	
 	public void initialize() {
+		// demo file 생성
+		Vector<Integer> intVector = new Vector<Integer>();
+		for(int i = 0; i<7; i++) {
+			fileHeaders.add(new FileControlBlock(EMODE.eClosed, null, 0));
+			intVector.add(2);
+		}
+		this.directory.add(intVector);
+		this.directory.add(intVector);	
+		this.directory.add(intVector);	
+		this.directory.add(intVector);	
 	}
 	public void finish() {
 	}
-
 
 	public void run() {
 		while (true) {
@@ -62,16 +75,16 @@ public class FileSystem extends Thread {
 				Process process = interrupt.getProcess(); // 어떤 파일을 open 하라는 지 알아야 한다.
 				if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eOpenStart)) {
 					// 현재 어떤 파일을 open 하라는지?
-					int fileId = process.pop();
+					int fileId = process.getFileID();
 					// 먼저 쓰고 있는 파일인지 아닌지 확인을 해야함.
-					int iMode = process.pop(); // 파라미터 줄때
-					EMODE mode = EMODE.values()[iMode];
+					EMODE mode = process.mode();
 					if (fileId < this.fileHeaders.size()) { // 파일 아이디가 file의 개수들 보다 작아야 함. 정상적인 파일이 뭔가가 있는 것임.
 						if (mode == EMODE.eRead) {
 							if (this.fileHeaders.get(fileId).getEmode() == EMODE.eClosed) {
 								this.fileHeaders.get(fileId).setEmode(mode); // read 모드로 변경
 								this.fileHeaders.get(fileId).setProcess(process);
 								this.fileHeaders.get(fileId).setCurrentPosition(0);// open은 시작이기 때문에 0부터 읽기 시작
+								this.fileIOInterruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eReadStart, process));
 							} else {
 								// 아니면 에러 발생, 같이 열까요? 라는 것, 동시에 여는 것,,하지마
 							}
@@ -80,25 +93,34 @@ public class FileSystem extends Thread {
 							this.fileHeaders.get(fileId).setProcess(process);
 							this.fileHeaders.get(fileId).setCurrentPosition(0);// write는 다 날리고 처음부터 써라, 기존의 파일이 있으면 다
 																				// 날려부랴
-						} else {
-							// closed 모드는 있을 수 없음 .
-							// 익셉션 처리를 윈래 해줘야함
+							this.fileIOInterruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eWriteStart, process));
 						}
+						// closed 모드는 있을 수 없음. 
 					} else {
 						if (mode == EMODE.eWrite) {
 							FileControlBlock fileControlBlock = new FileControlBlock();
 							fileControlBlock.setEmode(mode); // write 모드로 변경
 							fileControlBlock.setProcess(process);
-							fileControlBlock.setCurrentPosition(0);
+//							fileControlBlock.setCurrentPosition(0);
 							this.fileHeaders.add(fileControlBlock);
-						} else {
-							// read 모드인 경우 에러임.
+							this.fileIOInterruptQueue.add(new Interrupt(Interrupt.EInterrupt.eWriteStart, process));
 						}
+						// read 모드인 경우 에러임. 
 					}
-				} else if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eWriteStart)) {
-
-				} else if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eReadStart)) { // 파일이 쓰고 있는 중인지 확인이 필요
-					// data가 없음. 초기화 할때 가상의 파일을 하나 만들어봐라. okay 
+				} 
+				else if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eWriteStart)) {
+					// write 시작한 것 쓰기
+					this.directory.get(interrupt.getProcess().getFileID()).set(0, interrupt.getProcess().getWriteData());
+					this.fileHeaders.get(interrupt.getProcess().getFileID()).setEmode(EMODE.eClosed);
+					this.interruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eWriteTerminated, process));
+					//file id의 값을 저장해줘야 함.
+				} else if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eReadStart)) { 
+					int addData = this.fileHeaders.get(interrupt.getProcess().getFileID()).getCurrentPosition();
+					// 현재 파일 읽은 값까지 확인해서 넣음
+					interrupt.getProcess().inputFileData(this.directory.get(interrupt.getProcess().getFileID()).get(addData));
+					this.fileHeaders.get(interrupt.getProcess().getFileID()).setCurrentPosition(addData++);
+					this.fileHeaders.get(interrupt.getProcess().getFileID()).setEmode(EMODE.eClosed);
+					this.interruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eReadTerminated, process));
 				}
 			}
 		}
