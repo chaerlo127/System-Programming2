@@ -49,9 +49,9 @@ public class FileSystem extends Thread {
 	public FileSystem(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
 		this.fileHeaders = new Vector<FileControlBlock>();
 		this.directory = new Vector<Vector<Integer>>();
-		
 		this.interruptQueue = interruptQueue;
 		this.fileIOInterruptQueue = fileIOInterruptQueue;
+		this.bPowerOn = true;
 	}
 	
 	public void initialize() {

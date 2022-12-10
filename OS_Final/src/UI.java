@@ -21,12 +21,12 @@ public class UI extends Thread {
 	}
 
 	public void initialize() {
-		this.exit = false;
 	}
 
 	public void finish() {
+		this.exit = false;
 	}
-
+	
 	public void setFile(File file) {
 		if (file != null) {
 			this.files.add(file);
@@ -38,7 +38,9 @@ public class UI extends Thread {
 	public void exitMtd(boolean exit) {
 		this.exit = exit;
 	}
-
+	public boolean getExit() {
+		return this.exit;
+	}
 	// getters
 	public int getCount() {
 		return this.processNum;

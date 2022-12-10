@@ -84,7 +84,6 @@ public class MainFrame extends JFrame {
 				file = new File("data" + "/" + EJButton.eExe3.getName());
 			}else if(e.getActionCommand().equals(EJButton.eExit.getName())) {
 				ui.exitMtd(false);
-				System.exit(0);
 			}
 			ui.setFile(file);
 			count.setText(String.valueOf(ui.getCount()));

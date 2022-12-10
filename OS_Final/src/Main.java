@@ -24,11 +24,18 @@ public class Main {
 	}
 
 	private void finish() {
-		this.scheduler.finish();
-		this.ui.finish();
-		this.fileSystem.finish();
-		
-		this.interruptQueue.finish();
+		try {
+			ui.join(); // break point를 걸어두고, exit btn에 의해 ui 가 꺼지면 모든 Thread 종료 후 main 종료
+			this.scheduler.finish(); // 
+			this.ui.finish();
+			this.fileSystem.finish();
+			this.interruptQueue.finish();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("main 종료");
+		System.exit(0);
 	}
 
 	private void run() {
@@ -43,7 +50,5 @@ public class Main {
 		main.initialize();
 		main.run();
 		main.finish(); 
-		// 세 개의 Thread가 모두 끝나면 main이 끝나도록 코드를 짜야 함. 
-		// run이 끝나야지먄 main 이 끝나는 것을 점수로 반영할 예정임. 
 	}
 }
