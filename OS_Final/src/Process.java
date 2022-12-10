@@ -263,7 +263,7 @@ public class Process {
 			}else if (instruction.getCommand().compareTo("pop") == 0) {
 			}
 			
-			Thread.sleep(700);
+			Thread.sleep(300);
 			return true;
 			// °ö¼À, ³ª´°¼ÀÇÊ¿ä
 			// moveµµ ÇÊ¿äÇÒ °Í °°À½. 

@@ -58,7 +58,7 @@ public class FileSystem extends Thread {
 		Vector<Integer> intVector = new Vector<Integer>();
 		for(int i = 0; i<7; i++) {
 			fileHeaders.add(new FileControlBlock(EMODE.eClosed, null, 0));
-			intVector.add(0);
+			intVector.add(1);
 		}
 		this.directory.add(intVector);
 		this.directory.add(intVector);	

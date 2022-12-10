@@ -9,7 +9,7 @@ public class TimerInterrupt extends Thread {
 	@Override
 	public void run() {
 		try {
-			Thread.sleep(3500);
+			Thread.sleep(1000);
 			currentThread.interrupt();
 			return;
 		} catch (InterruptedException e) {

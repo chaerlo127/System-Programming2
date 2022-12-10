@@ -42,6 +42,7 @@ public class Scheduler extends Thread {
 			if (this.runningProcess == null) {
 				this.runningProcess = this.readyQueue.dequeue();
 				if(this.runningProcess != null) {
+					// timer 생성
 					this.currentThread =  Thread.currentThread();
 					killInterrupt = new TimerInterrupt(currentThread);
 					killInterrupt.start();
@@ -49,6 +50,7 @@ public class Scheduler extends Thread {
 			} else {
 				if(!this.runningProcess.executeInstruction(interruptQueue, fileIOInterruptQueue, killInterrupt)) { // interrupt 발생하거나 halt가 발생하게 되면
 					this.runningProcess = null;
+					killInterrupt.interrupt(); // timer 삭제
 				}
 			}
 		}
