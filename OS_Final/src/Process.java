@@ -224,6 +224,10 @@ public class Process {
 				int value1 = this.pcb.getRegisters().get(Integer.parseInt(instruction.getOperand1().substring(1)));
 				int value2 = Integer.parseInt(instruction.getOperand2());
 				this.pcb.getRegisters().set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 + value2);
+			}else if(instruction.getCommand().compareTo("subtractc") == 0) {
+				int value1 = this.pcb.getRegisters().get(Integer.parseInt(instruction.getOperand1().substring(1)));
+				int value2 = Integer.parseInt(instruction.getOperand2());
+				this.pcb.getRegisters().set(Integer.parseInt(instruction.getOperand1().substring(1)), value1 - value2);
 			}
 			
 			// cu 관련 명령어 -> greaterThanEqual, jump 필요
