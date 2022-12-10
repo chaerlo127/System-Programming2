@@ -7,7 +7,7 @@ import constraint.EMODE;
 
 public class Process {
 	
-	private class PCB{
+	public class PCB{
 		private static final int MAX_REGISTERS = 10;
 		
 		private int codeSize, dataSize, stackSize, heapSize;
@@ -19,6 +19,9 @@ public class Process {
 		private Vector<Integer> heapSegment;
 		
 		private Vector<Integer> registers;
+		
+		private EMODE emode;
+		private int fileID;
 
 		public PCB() {
 			this.codeList = new Vector<Instruction>();
@@ -44,12 +47,15 @@ public class Process {
 		public Vector<Instruction> getCodeList() {return codeList;}
 		public Vector<Integer> getDataSegment() {return dataSegment;}
 		public Vector<Integer> getRegisters() {return registers;}
+		public EMODE getMode() {return this.emode;}
+		public void setMode(EMODE mode) {this.emode = mode;}
+		public int getFileID() {return this.fileID;}
+		public void setFileID(int fileID) {this.fileID = fileID;}
 	}
 	// CPU
 	private boolean bGratherThan;
 	private boolean bEqual;
-	private EMODE emode;
-	private int fileID;
+
 	private int writeData;
 	
 	// Memory
@@ -86,12 +92,7 @@ public class Process {
 //		top = top - 1;
 //		return value;
 //	}
-	public EMODE mode() {
-		return this.emode;
-	}
-	public int getFileID() {
-		return this.fileID;
-	}
+
 	public void setProNum(int proNum) {
 		this.proNum = proNum;
 	}
@@ -101,8 +102,11 @@ public class Process {
 	public int getWriteData() {
 		return this.writeData;
 	}
+	public PCB getPCB() {
+		return this.pcb;
+	}
 	public void inputFileData(int readData) {
-		this.pcb.getDataSegment().set(this.fileID, readData);
+		this.pcb.getDataSegment().set(this.pcb.getFileID(), readData);
 	}
 	private void parseData (Scanner scanner) {
 		String command = scanner.next();
@@ -244,11 +248,11 @@ public class Process {
 				Interrupt.EInterrupt eInterrupt = null;
 				if(instruction.operand1.compareTo("readInt") ==0) {
 					eInterrupt = Interrupt.EInterrupt.eOpenStart;
-					this.emode = EMODE.eRead;
+					this.pcb.setMode(EMODE.eRead); 
 				} else if (instruction.operand1.compareTo("writeInt") == 0) {
-					this.writeData = this.pcb.getDataSegment().get(this.fileID);
+					this.writeData = this.pcb.getDataSegment().get(this.pcb.getFileID());
 					eInterrupt = Interrupt.EInterrupt.eOpenStart;
-					this.emode = EMODE.eWrite;
+					this.pcb.setMode(EMODE.eWrite);
 				} else if(instruction.operand1.compareTo("halt") ==0) {
 					eInterrupt = Interrupt.EInterrupt.eProcessTerminated;
 					Interrupt interrupt = new Interrupt(eInterrupt, this);
@@ -262,7 +266,7 @@ public class Process {
 			
 			// io Interrupt 명령어
 			else if (instruction.getCommand().compareTo("push") == 0) {
-				this.fileID = Integer.parseInt(instruction.getOperand1());
+				this.pcb.setFileID(Integer.parseInt(instruction.getOperand1()));
 				// push 2라면 2를 push 한다. 단위는 int, process stack push 하면 file system이 copy해서 쓸 것이다.  
 			}else if (instruction.getCommand().compareTo("pop") == 0) {
 			}

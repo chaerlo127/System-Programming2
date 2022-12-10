@@ -14,10 +14,10 @@ heapSize 10
 // i =6;
 // sum = readInt()
 // count = 5;
-// while (i > count) {
+// while (a > count) {
 //    value = readInt();
 //    sum = sum + value;
-//    i = i - 1;
+//    a = a - 1;
 // }
 // writeInt(sum);
 
@@ -27,7 +27,7 @@ store 0 r0
 push 1   
 interrupt readInt
 movec r1 5
-store 1 r1
+store 2 r1
 
 
 label while
@@ -45,7 +45,7 @@ add r0 r1
 store 1 r0
 
 load r0 0
-substractc r0 1
+subtractc r0 1
 store 0 r0
 
 jump while

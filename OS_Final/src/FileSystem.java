@@ -78,9 +78,9 @@ public class FileSystem extends Thread {
 				Process process = interrupt.getProcess(); // 어떤 파일을 open 하라는 지 알아야 한다.
 				if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eOpenStart)) {
 					// 현재 어떤 파일을 open 하라는지?
-					int fileId = process.getFileID();
+					int fileId = process.getPCB().getFileID();
 					// 먼저 쓰고 있는 파일인지 아닌지 확인을 해야함.
-					EMODE mode = process.mode();
+					EMODE mode = process.getPCB().getMode();
 					if (fileId < this.fileHeaders.size()) { // 파일 아이디가 file의 개수들 보다 작아야 함. 정상적인 파일이 뭔가가 있는 것임.
 						if (mode == EMODE.eRead) {
 							if (this.fileHeaders.get(fileId).getEmode() == EMODE.eClosed) {
@@ -113,16 +113,16 @@ public class FileSystem extends Thread {
 				} 
 				else if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eWriteStart)) {
 					// write 시작한 것 쓰기
-					this.directory.get(interrupt.getProcess().getFileID()).set(0, interrupt.getProcess().getWriteData());
-					this.fileHeaders.get(interrupt.getProcess().getFileID()).setEmode(EMODE.eClosed);
+					this.directory.get(interrupt.getProcess().getPCB().getFileID()).set(0, interrupt.getProcess().getWriteData());
+					this.fileHeaders.get(interrupt.getProcess().getPCB().getFileID()).setEmode(EMODE.eClosed);
 					this.interruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eWriteTerminated, process));
 					//file id의 값을 저장해줘야 함.
 				} else if (interrupt.geteInterrupt().equals(Interrupt.EInterrupt.eReadStart)) { 
-					int addData = this.fileHeaders.get(interrupt.getProcess().getFileID()).getCurrentPosition();
+					int addData = this.fileHeaders.get(interrupt.getProcess().getPCB().getFileID()).getCurrentPosition();
 					// 현재 파일 읽은 값까지 확인해서 넣음
-					interrupt.getProcess().inputFileData(this.directory.get(interrupt.getProcess().getFileID()).get(addData));
-					this.fileHeaders.get(interrupt.getProcess().getFileID()).setCurrentPosition(addData++);
-					this.fileHeaders.get(interrupt.getProcess().getFileID()).setEmode(EMODE.eClosed);
+					interrupt.getProcess().inputFileData(this.directory.get(interrupt.getProcess().getPCB().getFileID()).get(addData));
+					this.fileHeaders.get(interrupt.getProcess().getPCB().getFileID()).setCurrentPosition(addData++);
+					this.fileHeaders.get(interrupt.getProcess().getPCB().getFileID()).setEmode(EMODE.eClosed);
 					this.interruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eReadTerminated, process));
 				}
 			}
