@@ -44,6 +44,7 @@ public class FileSystem extends Thread {
 	
 	private Queue<Interrupt> interruptQueue;
 	private Queue<Interrupt> fileIOInterruptQueue;
+	private boolean bPowerOn;
 	
 	public FileSystem(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
 		this.fileHeaders = new Vector<FileControlBlock>();
@@ -65,11 +66,13 @@ public class FileSystem extends Thread {
 		this.directory.add(intVector);	
 		this.directory.add(intVector);	
 	}
+	
 	public void finish() {
+		this.bPowerOn = false;
 	}
 
 	public void run() {
-		while (true) {
+		while (this.bPowerOn) {
 			Interrupt interrupt = this.fileIOInterruptQueue.dequeue();
 			if (interrupt != null) {
 				Process process = interrupt.getProcess(); // 어떤 파일을 open 하라는 지 알아야 한다.

@@ -21,6 +21,7 @@ public class UI extends Thread {
 	}
 
 	public void initialize() {
+		this.exit = false;
 	}
 
 	public void finish() {

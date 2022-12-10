@@ -18,6 +18,7 @@ public class Scheduler extends Thread {
 	public void initialize() {
 	}
 	public void finish() {
+		this.bPowerOn = false;
 	}
 	public Scheduler( 
 			Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
@@ -81,13 +82,10 @@ public class Scheduler extends Thread {
 			// 전달한 disk 위치로 가서 몇 바이트를 읽으라고 명령을 내려라 한다. 
 			
 			// read의 과정
-//			fileSystem.read(runningProcess); // process 주소
 			runningProcess = readyQueue.dequeue();
 		}
 		private void HandleReadTerminated(Process process) { // file system의 일이 끝났음.
 			waitQueue.remove(runningProcess); 
-			// 특정 프로세스를 뽑는 함수가 필요하다. --> 기말고사 점수가 포함 된다. read start가 되려면 파라미터를 뽑아야한다. 
-			// 프로세스를 파일 시스템에게 일을 시켜야 한다. waitqueue에 저장하기 전에 일을 시키고 넣어줘야 한다.
 			readyQueue.enqueue(process);
 		}
 //		private void HandleWriteStart(Process process) {
