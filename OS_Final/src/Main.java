@@ -28,8 +28,8 @@ public class Main {
 	private void finish() {
 		try {
 			ui.join(); // break point를 걸어두고, exit btn에 의해 ui 가 꺼지면 모든 Thread 종료 후 main 종료
-			this.scheduler.finish(); // 
 			this.ui.finish();
+			this.scheduler.finish(); 
 			this.fileSystem.finish();
 			this.interruptQueue.finish();
 		} catch (InterruptedException e) {

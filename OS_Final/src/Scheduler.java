@@ -35,8 +35,10 @@ public class Scheduler extends Thread {
 		this.bPowerOn = true;
 	}
 	
-	Thread currentThread;
-	TimerInterrupt killInterrupt;
+	// Time out Interrupt 
+	private Thread currentThread;
+	private TimerInterrupt killInterrupt;
+	
 	public void run() {
 		while (this.bPowerOn) {
 			this.interruptHandler.handle();

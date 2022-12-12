@@ -77,6 +77,7 @@ public class UI extends Thread {
 			}
 		}
 	}
+	
 	private class Loader {
 		public Process load(File file) {
 			Process process = null;
