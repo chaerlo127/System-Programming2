@@ -1,3 +1,5 @@
+import constraint.Config;
+
 public class Main {
 	private Queue<Interrupt> interruptQueue; // UI ~ Scheduler ~ File System 에서 사용
 	private Queue<Interrupt> fileIOInterruptQueue; // Scheduler에서 File System으로 interrupt 전달할 때만 사용
@@ -34,7 +36,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("main 종료");
+		System.out.println(Config.mainStopSentence);
 		System.exit(0);
 	}
 

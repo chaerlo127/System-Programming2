@@ -22,9 +22,6 @@ public class FileSystem extends Thread {
 		public void setEmode(EMODE emode) {
 			this.emode = emode;
 		}
-		public Process getProcess() {
-			return process;
-		}
 		public void setProcess(Process process) {
 			this.process = process;
 		}

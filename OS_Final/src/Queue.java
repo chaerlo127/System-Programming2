@@ -1,9 +1,9 @@
 import java.util.Vector;
 
+import constraint.Config;
+
 public class Queue<T> extends Vector<T>{
 	private static final long serialVersionUID = 1L;
-	
-	private final int MAX_NUM_ELEMENT = 10;
 
 	private int head, tail, currentSize, maxSize;
 	public void initialize() {
@@ -11,7 +11,7 @@ public class Queue<T> extends Vector<T>{
 	public void finish() {
 	}
 	public Queue() {
-		this.maxSize = MAX_NUM_ELEMENT;
+		this.maxSize = Config.MAX_NUM_ELEMENT;
 		this.currentSize = 0;
 		this.head = 0;
 		this.tail = 0;		

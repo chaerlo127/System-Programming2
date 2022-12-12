@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import constraint.Config;
 import constraint.EJButton;
 
 public class MainFrame extends JFrame {
@@ -42,7 +43,7 @@ public class MainFrame extends JFrame {
 		}
 		
 		// count part
-		label = new JLabel("Click File Count: ");
+		label = new JLabel(Config.ClickCountSentence);
 		processCount.add(label);
 		
 		count = new JLabel();
@@ -62,7 +63,7 @@ public class MainFrame extends JFrame {
 	}
 
 	private File open() {
-		JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+		JFileChooser fileChooser = new JFileChooser(new File(System.getProperty(Config.userOpenFileDir)));
 		int ret = fileChooser.showOpenDialog(this);
 		if (ret == JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile();
@@ -77,11 +78,11 @@ public class MainFrame extends JFrame {
 			if(e.getActionCommand().equals(EJButton.eSelect.getName())) {
 				file = open();
 			}else if(e.getActionCommand().equals(EJButton.eExe1.getName())) {
-				file = new File("data" + "/" + EJButton.eExe1.getName());
+				file = new File(Config.directory + EJButton.eExe1.getName());
 			}else if(e.getActionCommand().equals(EJButton.eExe2.getName())) {
-				file = new File("data" + "/" + EJButton.eExe2.getName());
+				file = new File(Config.directory + EJButton.eExe2.getName());
 			}else if(e.getActionCommand().equals(EJButton.eExe3.getName())) {
-				file = new File("data" + "/" + EJButton.eExe3.getName());
+				file = new File(Config.directory + EJButton.eExe3.getName());
 			}else if(e.getActionCommand().equals(EJButton.eExit.getName())) {
 				ui.exitMtd(false);
 			}
