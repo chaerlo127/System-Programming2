@@ -78,10 +78,8 @@ public class Process {
 		this.top = 0;
 		this.labelMap = new HashMap<String, String>();
 	}
-	public void initialize() {
-	}
-	public void finish() {
-	}
+	public void initialize() {}
+	public void finish() {}
 	
 //	public void push(int value) {
 //		this.stackSegment.set(top, value);
@@ -187,8 +185,8 @@ public class Process {
 		}
 	}
 
-	// enum class 만들기 필요함
-	public boolean executeInstruction(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue, TimerInterrupt killInterrupt) {
+	// ENUM class 만들기 필요함
+	public boolean executeInstruction(Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue, TimeOutInterruptThread killInterrupt) {
 		try {
 			Instruction instruction = this.pcb.getCodeList().get(this.pcb.getPC());
 			System.out.println("Process: " + this.proNum + " [" + this.processName + "] \t" + 
@@ -283,7 +281,6 @@ public class Process {
 	}
 	
 	private class Instruction {
-		
 		private String command;
 		private String operand1;
 		private String operand2;

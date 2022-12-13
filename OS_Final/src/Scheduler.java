@@ -15,11 +15,9 @@ public class Scheduler extends Thread {
 	private Process runningProcess;
 
 	/////////////////////////////////////////////////
-	public void initialize() {
-	}
-	public void finish() {
-		this.bPowerOn = false;
-	}
+	public void initialize() {}
+	public void finish() {this.bPowerOn = false;}
+	
 	public Scheduler( 
 			Queue<Interrupt> interruptQueue, Queue<Interrupt> fileIOInterruptQueue) {
 		// components
@@ -37,17 +35,15 @@ public class Scheduler extends Thread {
 	
 	// Time out Interrupt 
 	private Thread currentThread;
-	private TimerInterrupt killInterrupt;
-	
+	private TimeOutInterruptThread killInterrupt;
 	public void run() {
 		while (this.bPowerOn) {
 			this.interruptHandler.handle();
-			if (this.runningProcess == null) {
+			if (this.runningProcess == null) { // 프로세스가 없다면
 				this.runningProcess = this.readyQueue.dequeue();
-				if(this.runningProcess != null) {
-					// timer 생성
-					this.currentThread =  Thread.currentThread();
-					killInterrupt = new TimerInterrupt(currentThread);
+				if(this.runningProcess != null) { 
+					this.currentThread =  Thread.currentThread(); // timer 생성
+					killInterrupt = new TimeOutInterruptThread(currentThread);
 					killInterrupt.start();
 				}
 			} else {
@@ -60,42 +56,33 @@ public class Scheduler extends Thread {
 	}
 	
 	private class InterruptHandler {
-
-		public InterruptHandler() {
-		}
 		// IHR (Interrupt Handling Routine)
 		// Handling 함수는 거의 표준화 되어 있음.
 		// process의 포인터를 잡아준다 파라미터가 있으면 process에서 인터럭트를 걸기전에 이미 push 해줬음. 
+		public InterruptHandler() {}
 		private void HandleTimeOut(Process process) {
 			System.out.println("------------------  [" + process.getProNum() + "] Time Out Interrupt ------------------");
 			readyQueue.enqueue(process);
 		}
 		private void HandleProcessStart(Process process) {
+			System.out.println("------------------  [" + process.getProNum() + "] Process Start ------------------");
 			process.initialize();
 			readyQueue.enqueue(process);
 		}
 		private void HandleProcessTerminated(Process process) {
+			System.out.println("------------------  [" + process.getProNum() + "] Process Terminated ------------------");
 			process.finish();
 			runningProcess = null;
 		}
+		// handle open으로 시작 (not ReadStart, WriteStart)
 		private void HandleOpenStart(Process process) {
-			// io start
-			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
-			// 전달한 disk 위치로 가서 몇 바이트를 읽으라고 명령을 내려라 한다. 
-			
-			// read의 과정
+			waitQueue.enqueue(process); // io start
 			runningProcess = readyQueue.dequeue();
 		}
-		private void HandleReadTerminated(Process process) { // file system의 일이 끝났음.
+		private void HandleReadTerminated(Process process) {
 			waitQueue.remove(runningProcess); 
 			readyQueue.enqueue(process);
 		}
-//		private void HandleWriteStart(Process process) {
-//			// io start
-//			
-//			waitQueue.enqueue(process); // runningProcess일 수도 있음. 
-//			runningProcess = readyQueue.dequeue();			
-//		}
 		private void HandleWriteTerminated(Process process) {
 			waitQueue.remove(runningProcess);
 			readyQueue.enqueue(process);			

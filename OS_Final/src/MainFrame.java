@@ -86,9 +86,9 @@ public class MainFrame extends JFrame {
 			}else if(e.getActionCommand().equals(EJButton.eExit.getName())) {
 				ui.exitMtd(false);
 			}
-			ui.setFile(file);
-			count.setText(String.valueOf(ui.getCount()));
-			list.setText(ui.getFileList());
+			ui.setFile(file); // UI 에 File 전달
+			count.setText(String.valueOf(ui.getCount())); // count의 이름 변경
+			list.setText(ui.getFileList()); // list의 ui file List를 불러와 변경하기
 		}
 	}
 }

@@ -86,13 +86,12 @@ public class FileSystem extends Thread {
 								this.fileHeaders.get(fileId).setCurrentPosition(0);// open은 시작이기 때문에 0부터 읽기 시작
 								this.fileIOInterruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eReadStart, process));
 							} else {
-								// 아니면 에러 발생, 같이 열까요? 라는 것, 동시에 여는 것,,하지마
+								// 아니면 에러 발생, 같이 열까요?
 							}
 						} else if (mode == EMODE.eWrite) {
 							this.fileHeaders.get(fileId).setEmode(mode); // write 모드로 변경
 							this.fileHeaders.get(fileId).setProcess(process);
 							this.fileHeaders.get(fileId).setCurrentPosition(0);// write는 다 날리고 처음부터 써라, 기존의 파일이 있으면 다
-																				// 날려부랴
 							this.fileIOInterruptQueue.enqueue(new Interrupt(Interrupt.EInterrupt.eWriteStart, process));
 						}
 						// closed 모드는 있을 수 없음. 
@@ -101,8 +100,8 @@ public class FileSystem extends Thread {
 							FileControlBlock fileControlBlock = new FileControlBlock();
 							fileControlBlock.setEmode(mode); // write 모드로 변경
 							fileControlBlock.setProcess(process);
-//							fileControlBlock.setCurrentPosition(0);
-							this.fileHeaders.add(fileControlBlock);
+							fileControlBlock.setCurrentPosition(0);
+							this.fileHeaders.add(fileControlBlock); // file header를 추가시킨다.
 							this.fileIOInterruptQueue.add(new Interrupt(Interrupt.EInterrupt.eWriteStart, process));
 						}
 						// read 모드인 경우 에러임. 

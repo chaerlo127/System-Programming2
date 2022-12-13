@@ -5,12 +5,14 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import constraint.Config;
+
 public class UI extends Thread {
 	private Queue<Interrupt> interruptQueue;
 	private Vector<File> files;
 	private Vector<String> fileName;
-	private int processNum;
-	private boolean exit;
+	private int processNum; // 프로세스 번호
+	private boolean exit; // UI 삭제
 
 	public UI(Queue<Interrupt> interruptQueue) {
 		this.interruptQueue = interruptQueue;
@@ -20,13 +22,11 @@ public class UI extends Thread {
 		processNum = 0;
 	}
 
-	public void initialize() {
-	}
-
-	public void finish() {
-		this.exit = false;
-	}
+	// essential method
+	public void initialize() {}
+	public void finish() {this.exit = false;}
 	
+	// getters & setters
 	public void setFile(File file) {
 		if (file != null) {
 			this.files.add(file);
@@ -34,18 +34,9 @@ public class UI extends Thread {
 			this.processNum++;
 		}
 	}
-
-	public void exitMtd(boolean exit) {
-		this.exit = exit;
-	}
-	public boolean getExit() {
-		return this.exit;
-	}
-	// getters
-	public int getCount() {
-		return this.processNum;
-	}
-
+	public void exitMtd(boolean exit) {this.exit = exit;}
+	public boolean getExit() {return this.exit;}
+	public int getCount() {return this.processNum;}
 	public String getFileList() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
@@ -54,7 +45,7 @@ public class UI extends Thread {
 		sb.append("[Process Select List]").append("<br/>");
 
 		for (String name : this.fileName) {
-			sb.append("[" + ++i + "]").append(name).append("<br/>");
+			sb.append("[" + ++i + "] ").append(name).append("<br/>");
 		}
 		sb.append("</html>");
 		return sb.toString();
@@ -62,10 +53,6 @@ public class UI extends Thread {
 
 	public void run() {
 		Loader loader = new Loader();
-
-		// console command
-		// "r fileName" -> execute fileName
-		// "q" -> quit program
 		while (exit) {
 			if (!files.isEmpty()) {
 				Process process = loader.load(files.remove(0));
@@ -90,8 +77,8 @@ public class UI extends Thread {
 				}
 				return process;
 			} catch (FileNotFoundException e) {
-				System.out.println("파일을 찾을 수 없습니다. 다시 입력해주세요");
-				JOptionPane.showMessageDialog(null, "파일을 찾을 수 없습니다. 다시 입력해주세요", "Warning", JOptionPane.WARNING_MESSAGE);
+				System.out.println(Config.CANNOTFINDFILE);
+				JOptionPane.showMessageDialog(null, Config.CANNOTFINDFILE, "Warning", JOptionPane.WARNING_MESSAGE);
 			}
 			return null;
 		}

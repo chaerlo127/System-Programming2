@@ -6,10 +6,8 @@ public class Queue<T> extends Vector<T>{
 	private static final long serialVersionUID = 1L;
 
 	private int head, tail, currentSize, maxSize;
-	public void initialize() {
-	}
-	public void finish() {
-	}
+	public void initialize() {}
+	public void finish() {}
 	public Queue() {
 		this.maxSize = Config.MAX_NUM_ELEMENT;
 		this.currentSize = 0;
