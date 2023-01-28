@@ -20,7 +20,7 @@
   * Loader
     * Process 생성
   * Sheduler
-    * instruction code를 data segmeent에 저장
+    * instruction code -> 각각의 Segment 
   * Loader & Scheduler
     * Semaphore & Critical Section (Blocking)
   * Ready Queue
