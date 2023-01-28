@@ -3,6 +3,9 @@
 * Operating System Context Switching Code
 * UI + Loader, Scheduler, File System, Timer 총 4개의 Therad의 Multi-Tasking을 구현
 
+## System Design
+![image](https://user-images.githubusercontent.com/90203250/215274732-a5032630-0c20-4285-bc9b-877f4cb22710.png)
+
 
 <br>
 
